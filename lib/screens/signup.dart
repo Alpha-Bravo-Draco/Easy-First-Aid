@@ -1,8 +1,14 @@
+import 'dart:convert';
+
+import 'package:easy_first_aid/Services/apiservice.dart';
 import 'package:easy_first_aid/screens/login.dart';
+// import 'package:easy_first_aid/screens/login.dart';
+import 'package:easy_first_aid/screens/verification.dart';
 import 'package:flutter/material.dart';
 
 class Signup extends StatefulWidget {
-  const Signup({Key? key}) : super(key: key);
+  final String email;
+  const Signup({Key? key, required this.email}) : super(key: key);
 
   @override
   State<Signup> createState() => _SignupState();
@@ -20,9 +26,47 @@ class _SignupState extends State<Signup> {
     });
   }
 
-  // void signup(String email, String password) async {
-  //   // Your signup logic here
-  // }
+  final String apiToken =
+      'dummy_device_token'; // Replace with your actual token
+
+  Future<void> Signupp(String email, String password) async {
+    try {
+      // Make the POST request using your ApiService
+      var result = await ApiService(
+              baseUrl: "https://expresscarr.pythonanywhere.com/api/user/")
+          .postRequest("register/", <String, dynamic>{
+        "email": email,
+        "name": 'new user',
+        "password": password,
+        "password2": password,
+        "contact": 99999,
+        "role": "user",
+        "device_token": " null",
+        "tc": "True",
+        "is_registered": true
+      });
+
+      // Check the status code from the response
+      if (result.statusCode == 201) {
+        // Parse the response body if needed
+        var responseBody = json.decode(result.body);
+        print("Successfull------: ${result.statusCode} - $responseBody");
+
+        // Navigate to the Verification screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Verification(
+                    email: widget.email,
+                  )),
+        );
+      } else {
+        print("Error------------: ${result.statusCode} - ${result.body}");
+      }
+    } catch (e) {
+      print("Error---------------${e.toString()} ");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,10 +150,12 @@ class _SignupState extends State<Signup> {
                       padding: const EdgeInsets.only(left: 30, right: 10),
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Login()));
+                          Signupp(_emailController.text.toString(),
+                              _passswordController.text.toString());
+                          // Navigator.pushReplacement(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => const Login()));
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
@@ -128,7 +174,14 @@ class _SignupState extends State<Signup> {
                       children: [
                         const Text("Already have an account?"),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: ((context) => const Login()),
+                              ),
+                            );
+                          },
                           child: const Text("Sign in"),
                         ),
                       ],

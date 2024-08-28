@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:easy_first_aid/Services/apiservice.dart';
 import 'package:easy_first_aid/screens/homescreen.dart';
 import 'package:easy_first_aid/screens/signup.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +15,27 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> loginn(String email, String password) async {
+    try {
+      var result = await ApiService(
+              baseUrl: 'https://expresscarr.pythonanywhere.com/api/user/')
+          .postRequest('login/', {'email': email, 'password': password});
+
+      if (result.statusCode == 200) {
+        var response = jsonDecode(result.body);
+        print("Login successful:  ${result.statusCode}- $response");
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const Homescreen()));
+      } else {
+        print(
+            "Unsuccessful response: Error--------------- ${result.statusCode}- ${result.body}");
+        // Handle different status codes or errors
+      }
+    } catch (e) {
+      print("Errorrrr: ${e.toString()}");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,11 +115,13 @@ class _LoginState extends State<Login> {
                   ),
                   ElevatedButton(
                     onPressed: () {
+                      loginn(_emailController.text.toString(),
+                          _passwordController.text.toString());
                       // Add Sign in Functionality
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Homescreen()));
+                      // Navigator.pushReplacement(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => const Homescreen()));
                     },
                     child: const Text(
                       "Sign in",
@@ -171,7 +197,9 @@ class _LoginState extends State<Login> {
                             Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const Signup()));
+                                    builder: (context) => const Signup(
+                                          email: '',
+                                        )));
                           },
                           child: const Text("Sign up"))
                     ],

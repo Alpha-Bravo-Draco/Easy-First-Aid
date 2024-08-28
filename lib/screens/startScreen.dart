@@ -75,7 +75,9 @@ class _StartscreenState extends State<Startscreen> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const Signup(),
+                              builder: (context) => const Signup(
+                                email: '',
+                              ),
                             ),
                           );
                           setState(() {

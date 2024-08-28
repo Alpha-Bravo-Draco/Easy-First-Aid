@@ -1,3 +1,4 @@
+import 'package:easy_first_aid/components/bottomnavbar.dart';
 import 'package:flutter/material.dart';
 
 class Homescreen extends StatefulWidget {
@@ -8,6 +9,14 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,23 +88,68 @@ class _HomescreenState extends State<Homescreen> {
                   fontWeight: FontWeight.bold),
             ),
           ),
-          const Row(
+          Row(
             children: [
               Images(
+                  onPress: () {},
                   text: "HOHOH",
                   image:
                       "https://static.vecteezy.com/system/resources/previews/004/899/869/non_2x/boy-rubs-his-face-with-his-hand-conjunctivitis-in-child-inflammation-and-injury-of-eye-tearfulness-symptom-of-eye-disease-vector.jpg"),
               Images(
+                  onPress: () {},
                   text: "hahaah",
                   image:
                       "https://thumbs.dreamstime.com/b/young-man-bleeding-wounded-hand-simple-style-icon-flat-vector-illustration-isolated-white-background-colorful-129278636.jpg"),
               Images(
+                  onPress: () {},
+                  text: "huihui",
+                  image:
+                      "https://static.vecteezy.com/system/resources/previews/004/899/869/non_2x/boy-rubs-his-face-with-his-hand-conjunctivitis-in-child-inflammation-and-injury-of-eye-tearfulness-symptom-of-eye-disease-vector.jpg"),
+            ],
+          ),
+          Row(
+            children: [
+              Images(
+                  onPress: () {},
+                  text: "HOHOH",
+                  image:
+                      "https://static.vecteezy.com/system/resources/previews/004/899/869/non_2x/boy-rubs-his-face-with-his-hand-conjunctivitis-in-child-inflammation-and-injury-of-eye-tearfulness-symptom-of-eye-disease-vector.jpg"),
+              Images(
+                  onPress: () {},
+                  text: "hahaah",
+                  image:
+                      "https://thumbs.dreamstime.com/b/young-man-bleeding-wounded-hand-simple-style-icon-flat-vector-illustration-isolated-white-background-colorful-129278636.jpg"),
+              Images(
+                  onPress: () {},
+                  text: "huihui",
+                  image:
+                      "https://static.vecteezy.com/system/resources/previews/004/899/869/non_2x/boy-rubs-his-face-with-his-hand-conjunctivitis-in-child-inflammation-and-injury-of-eye-tearfulness-symptom-of-eye-disease-vector.jpg"),
+            ],
+          ),
+          Row(
+            children: [
+              Images(
+                  onPress: () {},
+                  text: "HOHOH",
+                  image:
+                      "https://static.vecteezy.com/system/resources/previews/004/899/869/non_2x/boy-rubs-his-face-with-his-hand-conjunctivitis-in-child-inflammation-and-injury-of-eye-tearfulness-symptom-of-eye-disease-vector.jpg"),
+              Images(
+                  onPress: () {},
+                  text: "hahaah",
+                  image:
+                      "https://thumbs.dreamstime.com/b/young-man-bleeding-wounded-hand-simple-style-icon-flat-vector-illustration-isolated-white-background-colorful-129278636.jpg"),
+              Images(
+                  onPress: () {},
                   text: "huihui",
                   image:
                       "https://static.vecteezy.com/system/resources/previews/004/899/869/non_2x/boy-rubs-his-face-with-his-hand-conjunctivitis-in-child-inflammation-and-injury-of-eye-tearfulness-symptom-of-eye-disease-vector.jpg"),
             ],
           ),
         ],
+      ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }
@@ -104,12 +158,14 @@ class _HomescreenState extends State<Homescreen> {
 class Images extends StatefulWidget {
   final String text, image;
   final VoidCallback? onPress;
+  final bool addShadow; // New property to control shadow
 
   const Images({
     super.key,
     required this.text,
     required this.image,
     this.onPress,
+    this.addShadow = false, // Default value is false, meaning no shadow
   });
 
   @override
@@ -121,38 +177,59 @@ class _ImagesState extends State<Images> {
   Widget build(BuildContext context) {
     return Flexible(
       flex: 1,
-      child: InkWell(
-        onTap: widget.onPress,
-        child: AspectRatio(
-          aspectRatio: 1, // Adjust this to your preferred aspect ratio
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.network(
-                widget.image,
-                fit: BoxFit.cover,
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  // color: Colors.black54, // Semi-transparent background for text
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 8.0, horizontal: 16.0),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      widget.text,
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 0, 0, 0),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.only(
+            left: 8.0,
+            right: 8.0,
+            bottom: 8.0), // Padding added on all sides except top
+        child: InkWell(
+          onTap: widget.onPress,
+          child: AspectRatio(
+            aspectRatio: 1, // Adjust this to your preferred aspect ratio
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    boxShadow: widget.addShadow
+                        ? [
+                            BoxShadow(
+                              color: Color.fromARGB(255, 201, 198, 198)
+                                  .withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset:
+                                  Offset(0, 3), // changes position of shadow
+                            ),
+                          ]
+                        : [], // No shadow if addShadow is false
+                  ),
+                  child: Image.network(
+                    widget.image,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 16.0),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        widget.text,
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
