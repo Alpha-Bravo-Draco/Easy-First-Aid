@@ -1,3 +1,4 @@
+import 'package:easy_first_aid/screens/ai_Assistant.dart';
 import 'package:easy_first_aid/screens/emergencynumbers.dart';
 import 'package:easy_first_aid/screens/homescreen.dart';
 import 'package:easy_first_aid/screens/symptomscheck.dart';
@@ -57,10 +58,10 @@ class BottomNavBar extends StatelessWidget {
               MaterialPageRoute(
                   builder: (context) => const Emergencynumbers()));
         }
-        // if (index == 2) {
-        //   Navigator.push(
-        //       context, MaterialPageRoute(builder: (context) => const Chat()));
-        // }
+        if (index == 2) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const GeminiApp()));
+        }
         // if (index == 3) {
         //   Navigator.push(
         //       context, MaterialPageRoute(builder: (context) => const Trips()));
