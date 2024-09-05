@@ -104,7 +104,7 @@ class _EmergencynumbersState extends State<Emergencynumbers> {
               ),
             ),
           ),
-          const SizedBox(height: 10),
+          // const SizedBox(height: 10),
           Row(
             children: [
               Images(
@@ -123,7 +123,7 @@ class _EmergencynumbersState extends State<Emergencynumbers> {
               ),
             ],
           ),
-          const SizedBox(height: 30),
+          // const SizedBox(height: 30),
           Row(
             children: [
               Images(
@@ -142,7 +142,7 @@ class _EmergencynumbersState extends State<Emergencynumbers> {
               ),
             ],
           ),
-          const SizedBox(height: 30),
+          // const SizedBox(height: 30),
           Row(
             children: [
               Images(
@@ -194,7 +194,7 @@ class _ImagesState extends State<Images> {
     return Flexible(
       flex: 1,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
         child: InkWell(
           onTap: widget.onPress,
           child: AspectRatio(
@@ -203,23 +203,27 @@ class _ImagesState extends State<Images> {
               fit: StackFit.expand,
               children: [
                 Container(
-                  decoration: BoxDecoration(
-                    boxShadow: widget.addShadow
-                        ? [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: const Offset(0, 3),
-                            ),
-                          ]
-                        : [],
-                  ),
-                  child: Image.network(
-                    widget.image,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                    decoration: BoxDecoration(
+                      boxShadow: widget.addShadow
+                          ? [
+                              BoxShadow(
+                                color: Color.fromARGB(72, 168, 166, 166)
+                                    .withOpacity(0.5),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                                offset: const Offset(0, 3),
+                              ),
+                            ]
+                          : [],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                          15.0), // You can adjust the radius value as needed
+                      child: Image.network(
+                        widget.image,
+                        fit: BoxFit.cover,
+                      ),
+                    )),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
