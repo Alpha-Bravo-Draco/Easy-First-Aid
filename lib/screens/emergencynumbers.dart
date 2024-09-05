@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:easy_first_aid/components/bottomnavbar.dart';
 
 class Emergencynumbers extends StatefulWidget {
@@ -20,15 +20,61 @@ class _EmergencynumbersState extends State<Emergencynumbers> {
   }
 
   Future<void> _makePhoneCall(String number) async {
-    final Uri launchUri = Uri(
-      scheme: 'tel',
-      path: number,
-    );
-    if (await canLaunch(launchUri.toString())) {
-      await launch(launchUri.toString());
-    } else {
-      throw 'Could not launch $number';
+    // Check if the permission is granted
+    PermissionStatus status = await Permission.phone.status;
+
+    if (status.isGranted) {
+      final Uri launchUri = Uri(
+        scheme: 'tel',
+        path: number,
+      );
+      if (await canLaunchUrl(launchUri)) {
+        await launchUrl(launchUri);
+      } else {
+        throw 'Could not launch $number';
+      }
+    } else if (status.isDenied) {
+      // Request permission if it is denied
+      status = await Permission.phone.request();
+      if (status.isGranted) {
+        // Try making the call again if permission is granted
+        _makePhoneCall(number);
+      } else {
+        // Handle the case where permission is permanently denied
+        _showPermissionDeniedDialog();
+      }
+    } else if (status.isPermanentlyDenied) {
+      // Open app settings if permission is permanently denied
+      openAppSettings();
     }
+  }
+
+  void _showPermissionDeniedDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Permission Denied'),
+          content: const Text(
+              'Phone call permission is required to make calls. Please enable it in the app settings.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Settings'),
+              onPressed: () {
+                openAppSettings();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -36,90 +82,80 @@ class _EmergencynumbersState extends State<Emergencynumbers> {
     return Scaffold(
       body: Column(
         children: [
-          Column(
-            children: [
-              Container(
-                height: 70,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 255, 55, 41),
-                ),
-                child: const Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 8.0),
-                    child: Text(
-                      'Emergency helplines, Tap on the button to make a call',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+          Container(
+            height: 70,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: Color.fromARGB(255, 255, 55, 41),
+            ),
+            child: const Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 8.0),
+                child: Text(
+                  'Emergency helplines, Tap on the button to make a call',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
+                  textAlign: TextAlign.center,
                 ),
               ),
-            ],
+            ),
           ),
+          const SizedBox(height: 10),
           Row(
             children: [
-              const SizedBox(
-                height: 10,
-              ),
               Images(
                 text: "Ambulance (1122)",
                 addShadow: true,
-                onPress: () => _makePhoneCall('1122'), // Ambulance number
+                onPress: () => _makePhoneCall('1122'),
                 image:
                     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRl4EY56b8clx7DKbh2yJAAAjqlseW4Hs6aVw&s',
               ),
               Images(
                 text: "Police",
                 addShadow: true,
-                onPress: () => _makePhoneCall('15'), // Police number
+                onPress: () => _makePhoneCall('15'),
                 image:
                     'https://static.vecteezy.com/system/resources/previews/025/434/754/non_2x/kids-drawing-illustration-police-car-side-view-flat-cartoon-isolated-vector.jpg',
               ),
             ],
           ),
-          const SizedBox(
-            height: 30,
-          ),
+          const SizedBox(height: 30),
           Row(
             children: [
               Images(
                 text: "Edhi Ambulance (1122)",
                 addShadow: true,
-                onPress: () => _makePhoneCall('115'), // Ambulance number
+                onPress: () => _makePhoneCall('115'),
                 image:
                     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRl4EY56b8clx7DKbh2yJAAAjqlseW4Hs6aVw&s',
               ),
               Images(
-                text: "chipa Ambulance (1020)",
+                text: "Chhipa Ambulance (1020)",
                 addShadow: true,
-                onPress: () => _makePhoneCall('15'), // Police number
+                onPress: () => _makePhoneCall('1020'),
                 image:
                     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRl4EY56b8clx7DKbh2yJAAAjqlseW4Hs6aVw&s',
               ),
             ],
           ),
-          const SizedBox(
-            height: 30,
-          ),
+          const SizedBox(height: 30),
           Row(
             children: [
               Images(
                 text: "Fire Brigade",
                 addShadow: true,
-                onPress: () => _makePhoneCall('16'), // Ambulance number
+                onPress: () => _makePhoneCall('16'),
                 image:
                     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpjOZKzXQOfbNnW3EgXQTTSSEl9b_3MK8rGA&ss',
               ),
               Images(
-                text: " ",
+                text: "Medical Assistance (1166)",
                 addShadow: true,
-                onPress: () => _makePhoneCall('1166'), // Police number
+                onPress: () => _makePhoneCall('1166'),
                 image:
                     'https://static.vecteezy.com/system/resources/previews/009/902/432/non_2x/medical-assistant-icon-illustration-vector.jpg',
               ),
@@ -158,7 +194,7 @@ class _ImagesState extends State<Images> {
     return Flexible(
       flex: 1,
       child: Padding(
-        padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
         child: InkWell(
           onTap: widget.onPress,
           child: AspectRatio(
@@ -174,7 +210,7 @@ class _ImagesState extends State<Images> {
                               color: Colors.black.withOpacity(0.5),
                               spreadRadius: 5,
                               blurRadius: 7,
-                              offset: Offset(0, 3),
+                              offset: const Offset(0, 3),
                             ),
                           ]
                         : [],
@@ -194,7 +230,7 @@ class _ImagesState extends State<Images> {
                       child: Text(
                         widget.text,
                         style: const TextStyle(
-                          color: Color.fromARGB(255, 0, 0, 0),
+                          color: Colors.black,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),

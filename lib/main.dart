@@ -1,15 +1,22 @@
 import 'package:easy_first_aid/constants/apiKey.dart';
+import 'package:easy_first_aid/firebase_options.dart';
 import 'package:easy_first_aid/screens/ai_Assistant.dart';
 import 'package:easy_first_aid/screens/homescreen.dart';
-import 'package:easy_first_aid/screens/login.dart';
-import 'package:easy_first_aid/screens/signup.dart';
+import 'package:easy_first_aid/auth/login.dart';
+import 'package:easy_first_aid/auth/signup.dart';
 import 'package:easy_first_aid/screens/startScreen.dart';
 import 'package:easy_first_aid/screens/symptomscheck.dart';
+import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 // import 'package:swipeable_button_view/swipeable_button_view.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   Gemini.init(apiKey: Gemini_ApiKey);
   runApp(MyApp());
 }

@@ -1,10 +1,8 @@
-import 'dart:convert';
-
-import 'package:easy_first_aid/Services/apiservice.dart';
-import 'package:easy_first_aid/screens/login.dart';
-// import 'package:easy_first_aid/screens/login.dart';
-import 'package:easy_first_aid/screens/verification.dart';
+// import 'package:easy_first_aid/auth/verification.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_first_aid/auth/authService.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:easy_first_aid/auth/login.dart';
 
 class Signup extends StatefulWidget {
   final String email;
@@ -26,50 +24,82 @@ class _SignupState extends State<Signup> {
     });
   }
 
-  final String apiToken =
-      'dummy_device_token'; // Replace with your actual token
+  final AuthService _authService = AuthService(); // Instance of AuthService
 
-  Future<void> Signupp(String email, String password) async {
-    try {
-      // Make the POST request using your ApiService
-      var result = await ApiService(
-              baseUrl: "https://expresscarr.pythonanywhere.com/api/user/")
-          .postRequest("register/", <String, dynamic>{
-        "email": email,
-        "name": 'new user',
-        "password": password,
-        "password2": password,
-        "contact": 99999,
-        "role": "user",
-        "device_token": " null",
-        "tc": "True",
-        "is_registered": true
-      });
-
-      // Check the status code from the response
-      if (result.statusCode == 201) {
-        // Parse the response body if needed
-        var responseBody = json.decode(result.body);
-        print("Successfull------: ${result.statusCode} - $responseBody");
-
-        // Navigate to the Verification screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Verification(
-                    email: widget.email,
-                  )),
+  // Method to show loading indicator
+  void _showLoadingIndicator() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(),
         );
-      } else {
-        print("Error------------: ${result.statusCode} - ${result.body}");
+      },
+    );
+  }
+
+  // Method to hide loading indicator
+  void _hideLoadingIndicator() {
+    Navigator.of(context).pop();
+  }
+
+  // Method to handle signup
+  _signup() async {
+    // Ensure terms and conditions are accepte
+    if (!_isChecked) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please accept the terms and conditions")),
+      );
+      return;
+    }
+
+    final String email = _emailController.text.trim();
+    final String password = _passswordController.text.trim();
+
+    if (email.isNotEmpty && password.isNotEmpty) {
+      _showLoadingIndicator(); // Show loading indicator
+      try {
+        User? user = await _authService.createUserWithEmailAndPassword(
+          email,
+          password,
+        );
+
+        _hideLoadingIndicator(); // Hide loading indicator
+
+        if (user != null) {
+          // Signup successful, navigate to login or other screen
+          print("Signup successful. User ID: ${user.uid}");
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const Login()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text("User with this email already exists")),
+          );
+        }
+      } catch (e) {
+        _hideLoadingIndicator(); // Hide loading indicator on error
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Error: ${e.toString()}"),
+          ),
+        );
       }
-    } catch (e) {
-      print("Error---------------${e.toString()} ");
+      throw Exception();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill in both fields.")),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
         height: double.infinity,
@@ -89,7 +119,7 @@ class _SignupState extends State<Signup> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 100),
+                    SizedBox(height: screenHeight * 0.14),
                     const Center(
                       child: Text(
                         'Create Account',
@@ -100,7 +130,7 @@ class _SignupState extends State<Signup> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: screenHeight * 0.01),
                     const Center(
                       child: Text(
                         'Fill your information below',
@@ -112,7 +142,7 @@ class _SignupState extends State<Signup> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 50),
+                    SizedBox(height: screenHeight * 0.05),
                     CustomTextField(
                       label: 'Email',
                       hintText: 'example@gmail.com',
@@ -145,17 +175,12 @@ class _SignupState extends State<Signup> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: screenHeight * 0.01),
                     Padding(
                       padding: const EdgeInsets.only(left: 30, right: 10),
                       child: ElevatedButton(
                         onPressed: () {
-                          Signupp(_emailController.text.toString(),
-                              _passswordController.text.toString());
-                          // Navigator.pushReplacement(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => const Login()));
+                          _signup();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
@@ -168,7 +193,7 @@ class _SignupState extends State<Signup> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 40),
+                    SizedBox(height: screenHeight * 0.03),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

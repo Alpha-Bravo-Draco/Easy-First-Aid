@@ -1,4 +1,4 @@
-import 'package:easy_first_aid/screens/signup.dart';
+import 'package:easy_first_aid/auth/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:swipeable_button_view/swipeable_button_view.dart';
 
@@ -20,7 +20,7 @@ class _StartscreenState extends State<Startscreen> {
           // Background Image
           Positioned.fill(
             child: Image.network(
-              'https://plus.unsplash.com/premium_photo-1701534008693-0eee0632d47a?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8d2Vic2l0ZSUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D', // Replace with your network image URL
+              'https://plus.unsplash.com/premium_photo-1701534008693-0eee0632d47a?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8d2Vic2l0ZSUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D',
               fit: BoxFit.cover,
             ),
           ),
@@ -57,39 +57,41 @@ class _StartscreenState extends State<Startscreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    height: 300,
-                  ),
+                  const SizedBox(height: 300),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                    child: SwipeableButtonView(
-                      buttonText: 'SLIDE TO move forward',
-                      buttonWidget: const Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: Colors.grey,
-                      ),
-                      activeColor: const Color.fromARGB(255, 200, 17, 17),
-                      isFinished: isFinished,
-                      onWaitingProcess: () {
-                        Future.delayed(const Duration(seconds: 2), () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const Signup(
-                                email: '',
+                    child: SizedBox(
+                      width:
+                          double.infinity, // Constrain the button to full width
+                      child: SwipeableButtonView(
+                        buttonText: 'SLIDE TO move forward',
+                        buttonWidget: const Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: Colors.grey,
+                        ),
+                        activeColor: const Color.fromARGB(255, 200, 17, 17),
+                        isFinished: isFinished,
+                        onWaitingProcess: () {
+                          Future.delayed(const Duration(seconds: 2), () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const Signup(
+                                  email: '',
+                                ),
                               ),
-                            ),
-                          );
-                          setState(() {
-                            isFinished = true;
+                            );
+                            setState(() {
+                              isFinished = true;
+                            });
                           });
-                        });
-                      },
-                      onFinish: () async {
-                        setState(() {
-                          isFinished = false;
-                        });
-                      },
+                        },
+                        onFinish: () async {
+                          setState(() {
+                            isFinished = false;
+                          });
+                        },
+                      ),
                     ),
                   ),
                 ],
