@@ -28,8 +28,8 @@ class _EmergencynumbersState extends State<Emergencynumbers> {
         scheme: 'tel',
         path: number,
       );
-      if (await canLaunchUrl(launchUri)) {
-        await launchUrl(launchUri);
+      if (await canLaunch(launchUri.toString())) {
+        await launch(launchUri.toString());
       } else {
         throw 'Could not launch $number';
       }
@@ -37,6 +37,8 @@ class _EmergencynumbersState extends State<Emergencynumbers> {
       // Request permission if it is denied
       status = await Permission.phone.request();
       if (status.isGranted) {
+        print("Phone permission status: ${status.toString()}");
+
         // Try making the call again if permission is granted
         _makePhoneCall(number);
       } else {

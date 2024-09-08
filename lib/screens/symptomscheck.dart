@@ -98,8 +98,7 @@ class _SymptomscheckState extends State<Symptomscheck> {
 
   // Method to add a selected symptom to the list of selected symptoms
   void _addSymptom(String symptom) {
-    if (!selectedSymptoms.contains(symptom) &&
-        searchController.text.isNotEmpty) {
+    if (!selectedSymptoms.contains(symptom)) {
       // Avoid duplicate entries
       setState(() {
         selectedSymptoms.add(symptom); // Add the symptom to the list
