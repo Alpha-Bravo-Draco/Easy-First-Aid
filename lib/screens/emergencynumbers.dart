@@ -79,11 +79,13 @@ class _EmergencynumbersState extends State<Emergencynumbers> {
 
   @override
   Widget build(BuildContext context) {
+    // final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Column(
         children: [
           Container(
-            height: 70,
+            height: screenHeight * 0.07,
             width: double.infinity,
             decoration: const BoxDecoration(
               color: Color.fromARGB(255, 255, 55, 41),

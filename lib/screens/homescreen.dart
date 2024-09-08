@@ -19,12 +19,14 @@ class _HomescreenState extends State<Homescreen> {
 
   @override
   Widget build(BuildContext context) {
+    // final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 250,
+            height: screenHeight * 0.26,
             decoration: const BoxDecoration(
               color: Color.fromARGB(255, 150, 197, 197),
               borderRadius: BorderRadius.only(
@@ -35,8 +37,8 @@ class _HomescreenState extends State<Homescreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
-                  height: 70,
+                SizedBox(
+                  height: screenHeight * 0.05,
                 ),
                 Row(
                   children: [
@@ -77,7 +79,7 @@ class _HomescreenState extends State<Homescreen> {
               ],
             ),
           ),
-          const SizedBox(height: 17),
+          SizedBox(height: screenHeight * 0.02),
           const Padding(
             padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
             child: Text(

@@ -28,7 +28,7 @@ class BottomNavBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.chat_rounded),
-          label: 'Notifications',
+          label: 'Easy AI',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.edit_road_sharp),

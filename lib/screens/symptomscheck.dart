@@ -1,6 +1,7 @@
+import 'package:easy_first_aid/components/bottomnavbar.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert'; // For jsonDecode
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart'; // For loading asset files
 
 class Symptomscheck extends StatefulWidget {
   const Symptomscheck({super.key});
@@ -10,25 +11,44 @@ class Symptomscheck extends StatefulWidget {
 }
 
 class _SymptomscheckState extends State<Symptomscheck> {
+  int _selectedIndex = 4;
+  // Controller for the search text field
   final TextEditingController searchController = TextEditingController();
+
+  // List of symptoms to be displayed
   List<String> symptoms = [];
+
+  // List of symptoms selected by the user
   List<String> selectedSymptoms = [];
+
+  // List of symptoms filtered based on user input in the search field
   List<String> filteredSymptoms = [];
+
+  // Map that contains diseases as keys and their associated symptoms as values
   Map<String, List<String>> diseaseSymptoms = {};
+
+  // List of all available symptoms (populated from the JSON dataset)
   List<String> availableSymptoms = [];
+
+  // Stores the current search query entered by the user
   String searchQuery = '';
 
   @override
   void initState() {
     super.initState();
-    _loadSymptomsData();
+    _loadSymptomsData(); // Load the symptoms data when the widget is first created
   }
 
+  // Method to load symptoms data from the JSON file in assets
   Future<void> _loadSymptomsData() async {
-    final data = await rootBundle.loadString('assets/dataset.json');
-    final List<dynamic> jsonData = jsonDecode(data);
+    final data =
+        await rootBundle.loadString('assets/dataset.json'); // Load JSON file
+    final List<dynamic> jsonData = jsonDecode(data); // Parse JSON
 
+    // Set to store all unique symptoms
     Set<String> allSymptoms = {};
+
+    // Map to store diseases and their related symptoms
     Map<String, List<String>> diseaseSymptomsMap = {};
 
     for (var disease in jsonData) {
@@ -36,72 +56,90 @@ class _SymptomscheckState extends State<Symptomscheck> {
       String diseaseName = diseaseMap['Disease'] as String;
       List<String> symptomsList = [];
 
+      // Iterate through each key in the diseaseMap and find symptoms
       for (var key in diseaseMap.keys) {
         if (key.startsWith('Symptom_') &&
             diseaseMap[key].toString().trim().isNotEmpty) {
+          // Add the symptom to the list and also to the set of all symptoms
           symptomsList.add(diseaseMap[key].toString().trim());
           allSymptoms.add(diseaseMap[key].toString().trim());
         }
       }
 
       if (symptomsList.isNotEmpty) {
+        // Add the disease and its symptoms to the map
         diseaseSymptomsMap[diseaseName] = symptomsList;
       }
     }
 
     setState(() {
-      availableSymptoms = allSymptoms.toList();
-      filteredSymptoms = availableSymptoms;
-      diseaseSymptoms = diseaseSymptomsMap;
+      availableSymptoms =
+          allSymptoms.toList(); // Convert set to list for display
+      filteredSymptoms =
+          availableSymptoms; // Initialize filtered list with all symptoms
+      diseaseSymptoms =
+          diseaseSymptomsMap; // Store the map of diseases and symptoms
     });
   }
 
+  // Method to filter symptoms based on the user's search query
   void _filterSymptoms(String query) {
     setState(() {
-      searchQuery = query;
-      final lowerCaseQuery = query.toLowerCase();
+      searchQuery = query; // Store the current search query
+      final lowerCaseQuery = query
+          .toLowerCase(); // Convert to lowercase for case-insensitive search
       filteredSymptoms = availableSymptoms.where((symptom) {
-        return symptom.toLowerCase().contains(lowerCaseQuery);
+        return symptom
+            .toLowerCase()
+            .contains(lowerCaseQuery); // Return only matching symptoms
       }).toList();
     });
   }
 
+  // Method to add a selected symptom to the list of selected symptoms
   void _addSymptom(String symptom) {
-    if (!selectedSymptoms.contains(symptom)) {
+    if (!selectedSymptoms.contains(symptom) &&
+        searchController.text.isNotEmpty) {
+      // Avoid duplicate entries
       setState(() {
-        selectedSymptoms.add(symptom);
+        selectedSymptoms.add(symptom); // Add the symptom to the list
         searchController.clear(); // Clear the text field after adding
-        filteredSymptoms = availableSymptoms; // Reset the filtered symptoms
+        filteredSymptoms =
+            availableSymptoms; // Reset the filtered symptoms to all available symptoms
       });
     }
   }
 
+  // Method to remove a selected symptom from the list
   void _removeSymptom(int index) {
     setState(() {
-      selectedSymptoms.removeAt(index);
+      selectedSymptoms.removeAt(index); // Remove the symptom at the given index
     });
   }
 
+  // Method to search for diseases based on selected symptoms
   void _searchDiseases() {
     final results = diseaseSymptoms.entries
         .where((entry) => entry.value
             .toSet()
-            .intersection(selectedSymptoms.toSet())
+            .intersection(selectedSymptoms
+                .toSet()) // Check for matching symptoms between disease and selected symptoms
             .isNotEmpty)
-        .map((entry) => entry.key)
+        .map((entry) => entry.key) // Extract matching diseases
         .toList();
 
+    // Show the matching diseases in a dialog
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text('Matching Diseases'),
           content: Text(results.isNotEmpty
-              ? results.join(', ')
-              : 'No matching diseases found.'),
+              ? results.join(', ') // Show the diseases if there are matches
+              : 'No matching diseases found.'), // Show a message if no matches are found
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(context), // Close the dialog
               child: Text('Close'),
             ),
           ],
@@ -110,25 +148,35 @@ class _SymptomscheckState extends State<Symptomscheck> {
     );
   }
 
+  // on Item Tap function of bottomnavbar
+  void onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.blue, // Set background color of the screen
       body: Column(
         children: [
+          // Upper section with title and input field
           Container(
-            height: 400,
+            height: screenHeight * 0.4,
             decoration: const BoxDecoration(
               color: Color.fromARGB(255, 150, 197, 197),
               borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(40),
+                bottomLeft: Radius.circular(40), // Rounded corners
                 bottomRight: Radius.circular(40),
               ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 10),
+                SizedBox(height: screenHeight * 0.01),
                 Row(
                   children: [
                     const Padding(
@@ -136,9 +184,9 @@ class _SymptomscheckState extends State<Symptomscheck> {
                       child: Text(
                         "Symptoms Checker",
                         style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 176, 36, 26),
+                          fontSize: 25, // Title size
+                          fontWeight: FontWeight.bold, // Bold text
+                          color: Color.fromARGB(255, 176, 36, 26), // Text color
                         ),
                       ),
                     ),
@@ -146,98 +194,113 @@ class _SymptomscheckState extends State<Symptomscheck> {
                       child: Image.asset(
                         'assets/images/FirstAid.png',
                         fit: BoxFit
-                            .contain, // Adjusts the image size while maintaining aspect ratio
+                            .contain, // Ensure the image fits within the available space
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: screenHeight * 0.02),
                 Row(
                   children: [
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                         child: TextFormField(
-                          controller: searchController,
-                          cursorColor: const Color.fromARGB(255, 226, 0, 0),
+                          controller:
+                              searchController, // Attach search controller to input field
+                          cursorColor: const Color.fromARGB(
+                              255, 226, 0, 0), // Cursor color
                           decoration: InputDecoration(
-                            filled: true,
-                            fillColor: const Color.fromARGB(255, 255, 255, 255),
+                            filled:
+                                true, // Background color for the input field
+                            fillColor: const Color.fromARGB(
+                                255, 255, 255, 255), // White background
                             border: const OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(20)), // Rounded corners
+                              borderSide: BorderSide.none, // No border
                             ),
-                            hintText: "Search for symptoms",
+                            hintText: "Search for symptoms", // Placeholder text
                             suffixIcon: IconButton(
-                              onPressed: () =>
-                                  _addSymptom(searchController.text.trim()),
+                              onPressed: () => _addSymptom(searchController.text
+                                  .trim()), // Add symptom when icon is pressed
                               icon: const Icon(Icons.add),
                               color: const Color.fromARGB(255, 152, 14, 14),
                             ),
                           ),
-                          onChanged: _filterSymptoms,
+                          onChanged:
+                              _filterSymptoms, // Filter symptoms when the user types
                         ),
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    SizedBox(width: screenWidth * 0.01),
+                    // Search button
                     InkWell(
-                      onTap: _searchDiseases,
+                      onTap: _searchDiseases, // Trigger search when tapped
                       customBorder: const CircleBorder(),
                       child: Container(
-                        width: 45,
-                        height: 45,
+                        width: screenWidth * 0.1,
+                        height: screenHeight * 0.08,
                         margin: const EdgeInsets.only(right: 10),
                         decoration: BoxDecoration(
-                          color: Colors.grey[800],
-                          shape: BoxShape.circle,
+                          color:
+                              Colors.grey[800], // Dark color for search button
+                          shape: BoxShape.circle, // Circular button
                         ),
                         child: const Icon(
                           Icons.search,
-                          color: Colors.white,
+                          color: Colors.white, // White search icon
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: screenHeight * 0.01),
+                // List of selected symptoms
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
+                    scrollDirection:
+                        Axis.horizontal, // Allow horizontal scrolling
                     child: Wrap(
-                      spacing: 8.0,
-                      runSpacing: 8.0,
+                      spacing: 8.0, // Space between symptoms
+                      runSpacing: 8.0, // Space between rows
                       children: List.generate(selectedSymptoms.length, (index) {
                         return Container(
                           padding: const EdgeInsets.all(8.0),
                           decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
+                            color: Colors
+                                .white, // White background for selected symptoms
+                            borderRadius:
+                                BorderRadius.circular(10), // Rounded corners
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.2),
                                 spreadRadius: 2,
                                 blurRadius: 5,
-                                offset: Offset(0, 3),
+                                offset: Offset(0, 3), // Shadow below the box
                               ),
                             ],
                           ),
                           child: Row(
-                            mainAxisSize: MainAxisSize.min,
+                            mainAxisSize:
+                                MainAxisSize.min, // Take minimal space
                             children: [
                               Text(
                                 selectedSymptoms[index],
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: Colors.black,
+                                  color: Colors.black, // Text color
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                              SizedBox(width: screenWidth * 0.02),
                               IconButton(
-                                icon: const Icon(Icons.close),
-                                color: Colors.red,
-                                onPressed: () => _removeSymptom(index),
+                                icon: const Icon(Icons
+                                    .close), // Close icon for removing symptoms
+                                color:
+                                    Colors.red, // Red color for remove button
+                                onPressed: () => _removeSymptom(
+                                    index), // Remove symptom when pressed
                               ),
                             ],
                           ),
@@ -249,7 +312,8 @@ class _SymptomscheckState extends State<Symptomscheck> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: screenHeight * 0.02),
+          // Lower section with symptom search results
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(10),
@@ -257,31 +321,70 @@ class _SymptomscheckState extends State<Symptomscheck> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Symptoms',
+                    'Search from the below Symptoms',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 20,
+                      fontSize: 20, // Heading for symptom list
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: screenHeight * 0.01),
+                  // Display the list of filtered symptoms
                   Expanded(
                     child: ListView.builder(
-                      itemCount: filteredSymptoms.length,
+                      itemCount: filteredSymptoms
+                          .length, // Total number of filtered symptoms
                       itemBuilder: (context, index) {
                         final symptom = filteredSymptoms[index];
-                        return ListTile(
-                          title: Text(
-                            symptom,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+
+                        return GestureDetector(
+                          onTap: () {
+                            _addSymptom(
+                                symptom); // Add the selected symptom when tapped
+                            FocusScope.of(context)
+                                .unfocus(); // Hide the keyboard
+                          },
+                          child: AnimatedContainer(
+                            duration: Duration(
+                                milliseconds: 300), // Animation duration
+                            curve: Curves.easeInOut, // Animation curve
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 5.0,
+                                horizontal: 10.0), // Margin around each symptom
+                            padding: const EdgeInsets.all(
+                                12.0), // Padding inside each container
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 255, 157, 19)
+                                  .withOpacity(0.6), // Background color
+                              borderRadius: BorderRadius.circular(
+                                  10.0), // Rounded corners
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black
+                                      .withOpacity(0.2), // Shadow color
+                                  spreadRadius: 4,
+                                  blurRadius: 5,
+                                  offset: Offset(0, 3), // Position of shadow
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    symptom,
+                                    style: const TextStyle(
+                                      color: Colors
+                                          .white, // White text for each symptom
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                // / Add icon to indicate adding the symptom
+                              ],
                             ),
                           ),
-                          onTap: () {
-                            _addSymptom(symptom);
-                            FocusScope.of(context).unfocus(); // Hide keyboard
-                          },
                         );
                       },
                     ),
@@ -292,6 +395,8 @@ class _SymptomscheckState extends State<Symptomscheck> {
           ),
         ],
       ),
+      bottomNavigationBar:
+          BottomNavBar(currentIndex: _selectedIndex, onTap: onItemTapped),
     );
   }
 }

@@ -1,4 +1,6 @@
 // import 'package:easy_first_aid/auth/verification.dart';
+// import 'package:easy_first_aid/auth/otpVerification.dart';
+// import 'package:easy_first_aid/auth/verification.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_first_aid/auth/authService.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -48,8 +50,21 @@ class _SignupState extends State<Signup> {
   _signup() async {
     // Ensure terms and conditions are accepte
     if (!_isChecked) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please accept the terms and conditions")),
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Terms and conditons not accepted'),
+            // content: const Text(
+            //     'Please accept the terms and conditions to proceed.'), // Show a message if no matches are found
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context), // Close the dialog
+                child: const Text('Close'),
+              ),
+            ],
+          );
+        },
       );
       return;
     }
@@ -67,7 +82,7 @@ class _SignupState extends State<Signup> {
 
         _hideLoadingIndicator(); // Hide loading indicator
 
-        if (user != null) {
+        if (user != null && _passswordController.text.length >= 6) {
           // Signup successful, navigate to login or other screen
           print("Signup successful. User ID: ${user.uid}");
           Navigator.pushReplacement(
@@ -75,10 +90,43 @@ class _SignupState extends State<Signup> {
             MaterialPageRoute(builder: (context) => const Login()),
           );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text("User with this email already exists")),
-          );
+          if (_passswordController.text.length < 6) {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Password length must be 6 or greater'),
+                  // content: Text(
+                  //     'Please accept the terms and conditions to proceed.'), // Show a message if no matches are found
+                  actions: [
+                    TextButton(
+                      onPressed: () =>
+                          Navigator.pop(context), // Close the dialog
+                      child: const Text('Close'),
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('User with this email already exists'),
+                  // content: Text(
+                  //     'Please accept the terms and conditions to proceed.'), // Show a message if no matches are found
+                  actions: [
+                    TextButton(
+                      onPressed: () =>
+                          Navigator.pop(context), // Close the dialog
+                      child: const Text('Close'),
+                    ),
+                  ],
+                );
+              },
+            );
+          }
         }
       } catch (e) {
         _hideLoadingIndicator(); // Hide loading indicator on error
@@ -88,10 +136,22 @@ class _SignupState extends State<Signup> {
           ),
         );
       }
-      throw Exception();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please fill in both fields.")),
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Please fill all the fields'),
+            // content: Text(
+            //     ''), // Show a message if no matches are found
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context), // Close the dialog
+                child: const Text('Close'),
+              ),
+            ],
+          );
+        },
       );
     }
   }
@@ -156,11 +216,11 @@ class _SignupState extends State<Signup> {
                       obscureText: true,
                       controller: _passswordController,
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: screenHeight * 0.023),
                     Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(40, 10, 0, 10),
+                          padding: const EdgeInsets.fromLTRB(60, 10, 0, 10),
                           child: Checkbox(
                             value: _isChecked,
                             onChanged: _toggleCheckbox,
@@ -276,7 +336,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               color: Colors.black,
             ),
           ),
-          const SizedBox(height: 5),
+          // const SizedBox(height: 5),
           Container(
             width: widget.width, // Set the width of the container
             child: TextFormField(

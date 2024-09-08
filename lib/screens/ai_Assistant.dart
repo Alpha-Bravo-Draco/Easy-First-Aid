@@ -12,6 +12,7 @@ class GeminiApp extends StatefulWidget {
 
 class _GeminiAppState extends State<GeminiApp> {
   int _selectedIndex = 2;
+  bool _showChatUI = false; // State to track whether chat UI should appear
 
   void _onItemTapped(int index) {
     setState(() {
@@ -26,6 +27,7 @@ class _GeminiAppState extends State<GeminiApp> {
   ChatUser currentUser =
       ChatUser(id: '0', firstName: 'noman', lastName: 'butt');
   ChatUser geminiUser = ChatUser(id: '1', firstName: 'Easy', lastName: 'AI');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +35,9 @@ class _GeminiAppState extends State<GeminiApp> {
         title: const Text('Easy AI'),
         centerTitle: true,
       ),
-      body: _buildUI(),
+      body: _showChatUI || messages.isNotEmpty
+          ? _buildChatUI()
+          : _buildAnimatedContainers(),
       bottomNavigationBar: BottomNavBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -41,15 +45,85 @@ class _GeminiAppState extends State<GeminiApp> {
     );
   }
 
-  Widget _buildUI() {
-    return DashChat(
-        currentUser: currentUser, onSend: _sendMessage, messages: messages);
+  Widget _buildAnimatedContainers() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildAnimatedContainer(
+              Colors.red, "How to maintain a\n      healthy diet"),
+          SizedBox(height: 20),
+          _buildAnimatedContainer(Colors.green, "How can I stay Fit"),
+          SizedBox(height: 20),
+          _buildAnimatedContainer(Colors.blue, "ask a question"),
+        ],
+      ),
+    );
   }
 
+  Widget _buildAnimatedContainer(Color color, String text) {
+    return GestureDetector(
+      onTap: () {
+        _sendMessageFromContainer(
+            text); // Send the container's text as a message
+        setState(() {
+          _showChatUI = true; // Show chat UI when container is tapped
+        });
+      },
+      child: AnimatedContainer(
+        duration: Duration(seconds: 2),
+        curve: Curves.easeInOut,
+        height: 100,
+        width: 200,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChatUI() {
+    return DashChat(
+      currentUser: currentUser,
+      onSend: _sendMessage,
+      messages: messages,
+    );
+  }
+
+  // Method to send a message when the container is clicked
+  void _sendMessageFromContainer(String text) {
+    if (text.toLowerCase() == 'ask a question') {
+      // Do nothing if the text is 'Ask a question'
+      return;
+    }
+
+    // Otherwise, proceed to send the message
+    ChatMessage chatMessage = ChatMessage(
+      user: currentUser,
+      text: text,
+      createdAt: DateTime.now(),
+    );
+
+    _sendMessage(chatMessage);
+  }
+
+  // Method to handle message sending to the AI
   void _sendMessage(ChatMessage chatMessage) {
     setState(() {
       messages = [chatMessage, ...messages];
     });
+
     try {
       String question = chatMessage.text;
       gemini.streamGenerateContent(question).listen((event) {
