@@ -11,7 +11,7 @@ class Symptomscheck extends StatefulWidget {
 }
 
 class _SymptomscheckState extends State<Symptomscheck> {
-  int _selectedIndex = 4;
+  int _selectedIndex = 3;
   // Controller for the search text field
   final TextEditingController searchController = TextEditingController();
 
@@ -159,7 +159,7 @@ class _SymptomscheckState extends State<Symptomscheck> {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.blue, // Set background color of the screen
+      backgroundColor: Colors.white, // Set background color of the screen
       body: Column(
         children: [
           // Upper section with title and input field
@@ -322,7 +322,7 @@ class _SymptomscheckState extends State<Symptomscheck> {
                   const Text(
                     'Search from the below Symptoms',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Color.fromARGB(255, 0, 0, 0),
                       fontSize: 20, // Heading for symptom list
                       fontWeight: FontWeight.bold,
                     ),
@@ -353,7 +353,7 @@ class _SymptomscheckState extends State<Symptomscheck> {
                             padding: const EdgeInsets.all(
                                 12.0), // Padding inside each container
                             decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 255, 157, 19)
+                              color: Color.fromARGB(255, 33, 63, 18)
                                   .withOpacity(0.6), // Background color
                               borderRadius: BorderRadius.circular(
                                   10.0), // Rounded corners

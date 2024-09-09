@@ -57,7 +57,7 @@ class _StartscreenState extends State<Startscreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 300),
+                  const SizedBox(height: 100),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0),
                     child: SizedBox(

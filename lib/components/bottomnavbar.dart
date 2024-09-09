@@ -30,10 +30,10 @@ class BottomNavBar extends StatelessWidget {
           icon: Icon(Icons.chat_rounded),
           label: 'Easy AI',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.edit_road_sharp),
-          label: 'Messages',
-        ),
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.edit_road_sharp),
+        //   label: 'Messages',
+        // ),
         BottomNavigationBarItem(
           icon: Icon(Icons.medical_information),
           label: 'Symptoms Checker',
@@ -56,7 +56,9 @@ class BottomNavBar extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const Emergencynumbers()));
+                  builder: (context) => Emergencynumbers(
+                        previousIndex: currentIndex,
+                      )));
         }
         if (index == 2) {
           Navigator.push(context,
@@ -66,7 +68,7 @@ class BottomNavBar extends StatelessWidget {
         //   Navigator.push(
         //       context, MaterialPageRoute(builder: (context) => const Trips()));
         // }
-        if (index == 4) {
+        if (index == 3) {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => const Symptomscheck()));
         }

@@ -4,7 +4,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:easy_first_aid/components/bottomnavbar.dart';
 
 class Emergencynumbers extends StatefulWidget {
-  const Emergencynumbers({super.key});
+  final int previousIndex; // Add a previousIndex parameter
+
+  Emergencynumbers({super.key, required this.previousIndex});
 
   @override
   State<Emergencynumbers> createState() => _EmergencynumbersState();
@@ -83,6 +85,7 @@ class _EmergencynumbersState extends State<Emergencynumbers> {
   Widget build(BuildContext context) {
     // final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
+    print("===================-------------------= ${widget.previousIndex}");
     return Scaffold(
       body: Column(
         children: [
