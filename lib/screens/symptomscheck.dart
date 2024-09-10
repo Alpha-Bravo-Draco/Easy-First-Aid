@@ -353,7 +353,7 @@ class _SymptomscheckState extends State<Symptomscheck> {
                             padding: const EdgeInsets.all(
                                 12.0), // Padding inside each container
                             decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 33, 63, 18)
+                              color: Color.fromARGB(255, 150, 197, 197)
                                   .withOpacity(0.6), // Background color
                               borderRadius: BorderRadius.circular(
                                   10.0), // Rounded corners
@@ -374,8 +374,9 @@ class _SymptomscheckState extends State<Symptomscheck> {
                                   child: Text(
                                     symptom,
                                     style: const TextStyle(
-                                      color: Colors
-                                          .white, // White text for each symptom
+                                      fontSize: 19,
+                                      color: Color.fromARGB(255, 0, 0,
+                                          0), // White text for each symptom
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),

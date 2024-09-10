@@ -14,13 +14,15 @@ class _StartscreenState extends State<Startscreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.sizeOf(context).height;
+    final double screenWidth = MediaQuery.sizeOf(context).width;
     return Scaffold(
       body: Stack(
         children: [
           // Background Image
           Positioned.fill(
             child: Image.network(
-              'https://plus.unsplash.com/premium_photo-1701534008693-0eee0632d47a?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8d2Vic2l0ZSUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D',
+              'https://img.freepik.com/free-photo/background-gradient-lights_23-2149304991.jpg?size=626&ext=jpg&ga=GA1.1.2008272138.1725840000&semt=ais_hybrid',
               fit: BoxFit.cover,
             ),
           ),
@@ -32,21 +34,21 @@ class _StartscreenState extends State<Startscreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 20.0),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(
-                          height: 110,
-                          width: 110,
+                          height: screenHeight * 0.1,
+                          width: screenWidth * 0.12,
                         ),
-                        Image(
+                        const Image(
                           image: AssetImage(
                             'assets/images/FirstAid.png',
                           ),
                         ),
-                        Text(
+                        const Text(
                           "Easy First Aid",
                           style: TextStyle(
                             fontSize: 25,
@@ -57,7 +59,7 @@ class _StartscreenState extends State<Startscreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 100),
+                  SizedBox(height: screenHeight * 0.43),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0),
                     child: SizedBox(

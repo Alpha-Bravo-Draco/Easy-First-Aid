@@ -168,7 +168,7 @@ class _SignupState extends State<Signup> {
             // Background Image
             Positioned.fill(
               child: Image.network(
-                'https://plus.unsplash.com/premium_photo-1701534008693-0eee0632d47a?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8d2Vic2l0ZSUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D', // Replace with your network image URL
+                'https://img.freepik.com/free-photo/background-gradient-lights_23-2149304991.jpg?size=626&ext=jpg&ga=GA1.1.2008272138.1725840000&semt=ais_hybrid', // Replace with your network image URL
                 fit: BoxFit.cover,
               ),
             ),

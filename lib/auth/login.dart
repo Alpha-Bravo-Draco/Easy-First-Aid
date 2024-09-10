@@ -82,7 +82,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
+    // final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false, // Prevents resizing when keyboard shows
@@ -93,7 +93,7 @@ class _LoginState extends State<Login> {
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: NetworkImage(
-                  'https://plus.unsplash.com/premium_photo-1701534008693-0eee0632d47a?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8d2Vic2l0ZSUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D',
+                  'https://img.freepik.com/free-photo/background-gradient-lights_23-2149304991.jpg?size=626&ext=jpg&ga=GA1.1.2008272138.1725840000&semt=ais_hybrid',
                 ),
                 fit: BoxFit.cover, // Ensures the image covers the entire screen
               ),
@@ -140,23 +140,23 @@ class _LoginState extends State<Login> {
                   isPasswordField: true,
                   obscureText: true,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 40),
+                const Padding(
+                  padding: EdgeInsets.only(right: 40),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      TextButton(
-                        onPressed: () {
-                          // Forgot password logic
-                        },
-                        child: const Text(
-                          "Forgot Password",
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 71, 69, 69),
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
+                      // TextButton(
+                      //   onPressed: () {
+                      //     // Forgot password logic
+                      //   },
+                      //   child: const Text(
+                      //     "Forgot Password",
+                      //     style: TextStyle(
+                      //       color: Color.fromARGB(255, 71, 69, 69),
+                      //       decoration: TextDecoration.underline,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -178,33 +178,33 @@ class _LoginState extends State<Login> {
                         ),
                 ),
                 SizedBox(height: screenHeight * 0.034),
-                Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 65, right: 10),
-                      child: SizedBox(
-                        width: screenWidth * 0.233,
-                        // Set the width of the left divider
-                        child: const Divider(
-                          color: Colors.grey,
-                          thickness: 1,
-                        ),
-                      ),
-                    ),
-                    const Text("Or Sign in with"),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: SizedBox(
-                        width: screenWidth *
-                            0.233, // Set the width of the right divider
-                        child: const Divider(
-                          color: Colors.grey,
-                          thickness: 1,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     Padding(
+                //       padding: const EdgeInsets.only(left: 65, right: 10),
+                //       child: SizedBox(
+                //         width: screenWidth * 0.233,
+                //         // Set the width of the left divider
+                //         child: const Divider(
+                //           color: Colors.grey,
+                //           thickness: 1,
+                //         ),
+                //       ),
+                //     ),
+                //     const Text("Or Sign in with"),
+                //     Padding(
+                //       padding: const EdgeInsets.only(left: 10),
+                //       child: SizedBox(
+                //         width: screenWidth *
+                //             0.233, // Set the width of the right divider
+                //         child: const Divider(
+                //           color: Colors.grey,
+                //           thickness: 1,
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 SizedBox(height: screenHeight * 0.03),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

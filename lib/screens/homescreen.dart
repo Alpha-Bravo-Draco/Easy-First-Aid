@@ -23,6 +23,7 @@ class _HomescreenState extends State<Homescreen> {
     // final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -363,12 +364,15 @@ class _ImagesState extends State<Images> {
                         ]
                       : [], // No shadow if addShadow is false
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(
-                      12), // Clip image with border radius
-                  child: Image.network(
-                    widget.image,
-                    fit: BoxFit.cover,
+                child: AspectRatio(
+                  aspectRatio: 16 / 16,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                        12), // Clip image with border radius
+                    child: Image.network(
+                      widget.image,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
