@@ -1,10 +1,8 @@
-// import 'package:easy_first_aid/auth/verification.dart';
-// import 'package:easy_first_aid/auth/otpVerification.dart';
-// import 'package:easy_first_aid/auth/verification.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_first_aid/auth/authService.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:easy_first_aid/auth/login.dart';
+import 'package:get/get.dart';
 
 class Signup extends StatefulWidget {
   final String email;
@@ -28,43 +26,14 @@ class _SignupState extends State<Signup> {
 
   final AuthService _authService = AuthService(); // Instance of AuthService
 
-  // Method to show loading indicator
-  void _showLoadingIndicator() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
-  }
-
-  // Method to hide loading indicator
-  void _hideLoadingIndicator() {
-    Navigator.of(context).pop();
-  }
-
-  // Method to handle signup
   _signup() async {
-    // Ensure terms and conditions are accepte
+    // Ensure terms and conditions are accepted
     if (!_isChecked) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Terms and conditons not accepted'),
-            // content: const Text(
-            //     'Please accept the terms and conditions to proceed.'), // Show a message if no matches are found
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context), // Close the dialog
-                child: const Text('Close'),
-              ),
-            ],
-          );
-        },
+      Get.snackbar(
+        'Terms and Conditions',
+        'Please accept the terms and conditions to proceed.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
       return;
     }
@@ -72,107 +41,67 @@ class _SignupState extends State<Signup> {
     final String email = _emailController.text.trim();
     final String password = _passswordController.text.trim();
 
+    // Regular expression to validate email format
+    RegExp emailRegExp = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+
     if (email.isNotEmpty && password.isNotEmpty) {
-      _showLoadingIndicator(); // Show loading indicator
-      try {
-        User? user = await _authService.createUserWithEmailAndPassword(
-          email,
-          password,
+      if (!emailRegExp.hasMatch(email)) {
+        Get.snackbar(
+          'Invalid Email',
+          'Please enter a valid email address.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
         );
+      } else if (password.length < 6) {
+        Get.snackbar(
+          'Invalid Password',
+          'Password must be at least 6 characters long.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      } else {
+        try {
+          // Create user and send verification email
+          User? user = await _authService.createUserWithEmailAndPassword(
+              context, email, password);
 
-        _hideLoadingIndicator(); // Hide loading indicator
-
-        if (user != null && _passswordController.text.length >= 6) {
-          // Signup successful, navigate to login or other screen
-          print("Signup successful. User ID: ${user.uid}");
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const Login()),
-          );
-        } else {
-          if (_passswordController.text.length < 6) {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text('Password length must be 6 or greater'),
-                  // content: Text(
-                  //     'Please accept the terms and conditions to proceed.'), // Show a message if no matches are found
-                  actions: [
-                    TextButton(
-                      onPressed: () =>
-                          Navigator.pop(context), // Close the dialog
-                      child: const Text('Close'),
-                    ),
-                  ],
-                );
-              },
-            );
-          } else {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text('User with this email already exists'),
-                  // content: Text(
-                  //     'Please accept the terms and conditions to proceed.'), // Show a message if no matches are found
-                  actions: [
-                    TextButton(
-                      onPressed: () =>
-                          Navigator.pop(context), // Close the dialog
-                      child: const Text('Close'),
-                    ),
-                  ],
-                );
-              },
+          if (user != null) {
+            // Show a message to ask the user to verify their email
+            Get.snackbar(
+              "Verification Pending",
+              "We have sent you a verification email. Please check your inbox.",
+              backgroundColor: Colors.orange,
+              colorText: Colors.white,
             );
           }
+        } catch (e) {
+          // Exception handling is now managed in AuthService
         }
-      } catch (e) {
-        _hideLoadingIndicator(); // Hide loading indicator on error
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Error: ${e.toString()}"),
-          ),
-        );
       }
     } else {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Please fill all the fields'),
-            // content: Text(
-            //     ''), // Show a message if no matches are found
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context), // Close the dialog
-                child: const Text('Close'),
-              ),
-            ],
-          );
-        },
+      Get.snackbar(
+        'Empty Fields',
+        'Please fill in all fields to continue.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
         height: double.infinity,
         child: Stack(
           children: [
-            // Background Image
             Positioned.fill(
               child: Image.network(
                 'https://img.freepik.com/free-photo/background-gradient-lights_23-2149304991.jpg?size=626&ext=jpg&ga=GA1.1.2008272138.1725840000&semt=ais_hybrid', // Replace with your network image URL
                 fit: BoxFit.cover,
               ),
             ),
-            // Foreground Content
             SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -230,7 +159,9 @@ class _SignupState extends State<Signup> {
                         ),
                         const Text("Agree with "),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            // Navigate to Terms and Conditions page or show them
+                          },
                           child: const Text("Terms and Conditions"),
                         ),
                       ],

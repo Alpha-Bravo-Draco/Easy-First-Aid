@@ -2,6 +2,7 @@ import 'package:easy_first_aid/auth/signup.dart';
 import 'package:easy_first_aid/screens/homescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -55,28 +56,22 @@ class _LoginState extends State<Login> {
       } on FirebaseAuthException catch (e) {
         _hideLoadingIndicator(); // Hide loading indicator on error
         if (e.code == 'user-not-found') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("No user found for that email.")),
-          );
+          Get.snackbar(
+              "User not found", "This user does not exist please signup");
         } else if (e.code == 'wrong-password') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Wrong password provided.")),
-          );
+          Get.snackbar("Error", "The supplied credentials are incorrect.",
+              backgroundColor: Colors.red, colorText: Colors.white);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Error: ${e.message}")),
-          );
+          Get.snackbar("Error", e.toString(),
+              backgroundColor: Colors.red, colorText: Colors.white);
         }
       } catch (e) {
         _hideLoadingIndicator(); // Hide loading indicator on error
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: ${e.toString()}")),
-        );
+        Get.snackbar("Error", "${e.toString()}}");
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please fill in both fields.")),
-      );
+      Get.snackbar("Error", "Please fill all the fields",
+          backgroundColor: Colors.red, colorText: Colors.white);
     }
   }
 

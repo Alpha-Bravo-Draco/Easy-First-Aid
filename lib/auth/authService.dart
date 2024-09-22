@@ -1,19 +1,138 @@
+import 'package:easy_first_aid/auth/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // Create user with email and password
   Future<User?> createUserWithEmailAndPassword(
-      String email, String password) async {
+      BuildContext context, String email, String password) async {
     try {
-      final credentials = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      return credentials.user;
+      _showLoadingIndicator(context);
+
+      // Create the user
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // Send email verification
+        await user.sendEmailVerification();
+        print("Verification email sent to ${user.email}");
+
+        // Check if the email is verified
+        bool isVerified = await _checkEmailVerified(user, context);
+
+        // If the email is verified, return the user
+        if (isVerified) {
+          return user;
+        }
+      }
+
+      return null;
+    } on FirebaseAuthException catch (e) {
+      _hideLoadingIndicator(context);
+      if (e.code == 'weak-password') {
+        _showSnackbar(
+          'Weak Password',
+          'The password provided is too weak.',
+          Colors.red,
+          Colors.white,
+        );
+      } else if (e.code == 'email-already-in-use') {
+        _showSnackbar(
+          'Email In Use',
+          'The account already exists for that email.',
+          Colors.red,
+          Colors.white,
+        );
+      } else {
+        _showSnackbar(
+          'Error',
+          e.message ?? 'An unknown error occurred',
+          Colors.red,
+          Colors.white,
+        );
+      }
+      return null;
     } catch (e) {
-      print("Error----------------${e.toString()}");
+      _hideLoadingIndicator(context);
+      print(e.toString());
+      _showSnackbar(
+        'Unexpected Error',
+        'An unexpected error occurred: ${e.toString()}',
+        Colors.red,
+        Colors.white,
+      );
+      return null;
     }
-    return null;
+  }
+
+  // Check if the email is verified
+  Future<bool> _checkEmailVerified(User user, BuildContext context) async {
+    bool isVerified = false;
+
+    while (!isVerified) {
+      await user.reload(); // Refresh user status
+      user = _auth.currentUser!;
+
+      if (user.emailVerified) {
+        isVerified = true;
+        _hideLoadingIndicator(context);
+        if (Get.isSnackbarOpen) {
+          Get.back(); // Dismiss existing Snackbar if open
+        }
+        _showSnackbar(
+          "Success",
+          "Email verification successful. Redirecting to login.",
+          Colors.green,
+          Colors.white,
+        );
+        // Navigate to login screen
+        Future.delayed(const Duration(seconds: 1), () {
+          if (Navigator.canPop(context)) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const Login()),
+            );
+          }
+        });
+      } else {
+        _showSnackbar(
+          'Email Verification',
+          'Please verify your email to continue. We\'ll keep checking.',
+          Colors.yellow,
+          Colors.black,
+        );
+        await Future.delayed(const Duration(seconds: 5));
+      }
+    }
+
+    return isVerified;
+  }
+
+  void _showLoadingIndicator(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  void _hideLoadingIndicator(BuildContext context) {
+    if (Navigator.canPop(context)) {
+      Navigator.of(context).pop();
+    }
   }
 
   Future<User?> loginUserWithEmailAndPassword(
@@ -23,71 +142,22 @@ class AuthService {
           email: email, password: password);
       return credentials.user;
     } catch (e) {
-      print("Error----------------${e.toString()}");
+      print("Error: ${e.toString()}");
     }
     return null;
   }
 
-  // Corrected signInWithPhone method
-  void signInWithPhone(
-      BuildContext context,
-      String phoneNumber,
-      Function(String) onVerificationIdReceived,
-      Function(String) onCodeSent) async {
-    try {
-      await _auth.verifyPhoneNumber(
-        phoneNumber: phoneNumber,
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          // Auto verification completed
-          await _auth.signInWithCredential(credential);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Phone number automatically verified'),
-          ));
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          // Handle failed verification
-          print('Verification failed: ${e.message}');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Verification failed: ${e.message}'),
-          ));
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          // SMS code sent
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Code sent to $phoneNumber'),
-          ));
-          // Call the callback function to store verificationId
-          onVerificationIdReceived(verificationId);
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          // Timeout for automatic code retrieval
-          onVerificationIdReceived(verificationId);
-        },
-        timeout:
-            const Duration(seconds: 60), // Timeout for automatic verification
-      );
-    } catch (e) {
-      print("Error----------------${e.toString()}");
+  // Utility method to show Snackbar
+  void _showSnackbar(
+      String title, String message, Color backgroundColor, Color textColor) {
+    if (Get.isSnackbarOpen) {
+      Get.back(); // Dismiss the existing Snackbar if open
     }
+    Get.snackbar(
+      title,
+      message,
+      backgroundColor: backgroundColor,
+      colorText: textColor,
+    );
   }
-
-  // Future<void> verifyOTP(
-  //     String verificationId, String smsCode, BuildContext context) async {
-  //   try {
-  //     PhoneAuthCredential credential = PhoneAuthProvider.credential(
-  //       verificationId: verificationId,
-  //       smsCode: smsCode,
-  //     );
-
-  //     await _auth.signInWithCredential(credential);
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //       content: Text('Phone number verified successfully'),
-  //     ));
-  //   } catch (e) {
-  //     print("Error during OTP verification: ${e.toString()}");
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //       content: Text('Failed to verify OTP'),
-  //     ));
-  //   }
-  // }
 }

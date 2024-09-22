@@ -1,123 +1,204 @@
-// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:easy_first_aid/auth/login.dart';
 // import 'package:flutter/material.dart';
+// import 'package:get/get.dart';
+// import 'package:pin_code_text_field/pin_code_text_field.dart';
+// import 'package:email_auth/email_auth.dart';
 
-// class OtpVerificationScreen extends StatefulWidget {
-//   final String phoneNumber;
-//   final String verificationId;
+// class Verification extends StatefulWidget {
+//   final String email; // Email passed from previous screen
 
-//   const OtpVerificationScreen({
+//   const Verification({
 //     Key? key,
-//     required this.phoneNumber,
-//     required this.verificationId,
+//     required this.email,
 //   }) : super(key: key);
 
 //   @override
-//   _OtpVerificationScreenState createState() => _OtpVerificationScreenState();
+//   State<Verification> createState() => _VerificationState();
 // }
 
-// class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
-//   final _otpController = TextEditingController();
-//   bool _isLoading = false;
+// class _VerificationState extends State<Verification> {
+//   bool hasError = false;
+//   int pinLength = 6;
+//   EmailAuth emailAuth = EmailAuth(sessionName: 'Signup');
+//   final TextEditingController otpController = TextEditingController();
+//   final TextEditingController emailController = TextEditingController();
 
-//   void _verifyOtp() async {
-//     setState(() {
-//       _isLoading = true;
-//     });
+  
+//   @override
+//   void initState() {
+//     super.initState();
+//     // Assign widget.email to emailController
+//     emailController.text = widget.email;
 
-//     final smsCode = _otpController.text.trim();
-
-//     if (smsCode.isEmpty) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text('Please enter the OTP code.')),
-//       );
-//       setState(() {
-//         _isLoading = false;
-//       });
-//       return;
-//     }
-
-//     try {
-//       // Create a credential with the verificationId and the entered OTP
-//       final PhoneAuthCredential credential = PhoneAuthProvider.credential(
-//         verificationId: widget.verificationId,
-//         smsCode: smsCode,
-//       );
-
-//       // Sign the user in using the credential
-//       UserCredential userCredential =
-//           await FirebaseAuth.instance.signInWithCredential(credential);
-
-//       if (userCredential.user != null) {
-//         // Success: Navigate to the desired screen or show success message
-//         Navigator.of(context).pushReplacement(
-//           MaterialPageRoute(builder: (context) => SuccessScreen()),
-//         );
-//       }
-//     } catch (e) {
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text('Invalid OTP, please try again.')),
-//       );
-//     } finally {
-//       setState(() {
-//         _isLoading = false;
-//       });
-//     }
+//     // Automatically send OTP when screen loads
+//     sendOtp();
 //   }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('Verify OTP'),
-//         centerTitle: true,
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             const Text(
-//               'Enter the OTP sent to your phone number',
-//               style: TextStyle(fontSize: 18),
+//   void _showErrorDialog(String title, String message) {
+//     showDialog(
+//       context: context,
+//       builder: (BuildContext context) {
+//         return AlertDialog(
+//           title: Text(title),
+//           content: Text(message),
+//           actions: <Widget>[
+//             TextButton(
+//               child: const Text("OK"),
+//               onPressed: () {
+//                 Navigator.of(context).pop();
+//               },
 //             ),
-//             const SizedBox(height: 20),
-//             Text(
-//               widget.phoneNumber,
-//               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-//             ),
-//             const SizedBox(height: 20),
-//             TextField(
-//               controller: _otpController,
-//               keyboardType: TextInputType.number,
-//               maxLength: 6, // Assuming OTP is 6 digits
-//               decoration: InputDecoration(
-//                 labelText: 'OTP Code',
-//                 border: OutlineInputBorder(),
-//               ),
-//             ),
-//             const SizedBox(height: 20),
-//             _isLoading
-//                 ? CircularProgressIndicator()
-//                 : ElevatedButton(
-//                     onPressed: _verifyOtp,
-//                     child: const Text('Verify OTP'),
-//                   ),
 //           ],
-//         ),
-//       ),
+//         );
+//       },
 //     );
 //   }
-// }
 
-// class SuccessScreen extends StatelessWidget {
+//   Future<void> sendOtp() async {
+//     try {
+//       // Print email before sending to verify it's correct
+//       print("Sending OTP to email: ${emailController.text}");
+
+//       var result = await emailAuth.sendOtp(
+//         recipientMail: emailController.text,
+//         otpLength: 6,
+//       );
+
+//       if (result) {
+//         print("OTP sent to email: ${emailController.text}");
+//       } else {
+//         // Failed to send OTP
+//         _showErrorDialog("Error", "Failed to send OTP. Please try again.");
+//       }
+//     } catch (e) {
+//       // Log and show the error
+//       print("Error sending OTP: ${e.toString()}");
+//       _showErrorDialog(
+//           "Error", "An unexpected error occurred: ${e.toString()}");
+//     }
+//   }
+
+//   Future<void> verifyOtp() async {
+//     var result = emailAuth.validateOtp(
+//         recipientMail: emailController.text, userOtp: otpController.text);
+//     if (result) {
+//       Get.snackbar("Success", "OTP verification successful");
+//       Navigator.pushReplacement(
+//         context,
+//         MaterialPageRoute(builder: (context) => const Login()),
+//       );
+//     } else {
+//       _showErrorDialog("Error", "Invalid OTP. Please try again.");
+//     }
+//   }
+
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       appBar: AppBar(title: const Text("Success")),
-//       body: Center(
-//         child: Text(
-//           'Phone number verified successfully!',
-//           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+//       backgroundColor: Colors.white,
+//       body: SingleChildScrollView(
+//         child: Column(
+//           children: [
+//             const SizedBox(height: 100),
+//             const Center(
+//               child: Text(
+//                 'Verify Code',
+//                 style: TextStyle(
+//                   fontSize: 30,
+//                   color: Color.fromARGB(255, 19, 18, 18),
+//                   decoration: TextDecoration.none,
+//                 ),
+//               ),
+//             ),
+//             const SizedBox(height: 10),
+//             Center(
+//               child: Text(
+//                 'Please enter the code sent to ${widget.email}',
+//                 textAlign: TextAlign.center,
+//                 style: const TextStyle(
+//                   fontSize: 15,
+//                   color: Colors.grey,
+//                   decoration: TextDecoration.none,
+//                 ),
+//               ),
+//             ),
+//             const SizedBox(height: 40),
+//             Padding(
+//               padding: const EdgeInsets.only(left: 0),
+//               child: Row(
+//                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+//                 children: [
+//                   PinCodeTextField(
+//                     pinBoxRadius: 10,
+//                     autofocus: true,
+//                     controller: otpController,
+//                     hideCharacter: false,
+//                     highlight: true,
+//                     defaultBorderColor:
+//                         const Color.fromARGB(255, 153, 153, 153),
+//                     hasTextBorderColor:
+//                         const Color.fromARGB(255, 153, 153, 153),
+//                     highlightPinBoxColor:
+//                         const Color.fromARGB(255, 153, 153, 153),
+//                     maxLength: pinLength,
+//                     hasError: hasError,
+//                     onTextChanged: (text) {
+//                       setState(() {
+//                         hasError = false;
+//                       });
+//                     },
+//                     onDone: (text) {
+//                       print("DONE $text");
+//                     },
+//                     pinBoxWidth: 60,
+//                     pinBoxHeight: 60,
+//                     hasUnderline: false,
+//                     wrapAlignment: WrapAlignment.spaceEvenly,
+//                     pinBoxDecoration:
+//                         ProvidedPinBoxDecoration.defaultPinBoxDecoration,
+//                     pinTextStyle: const TextStyle(fontSize: 22.0),
+//                     pinTextAnimatedSwitcherTransition:
+//                         ProvidedPinBoxTextAnimation.scalingTransition,
+//                     pinTextAnimatedSwitcherDuration:
+//                         const Duration(milliseconds: 400),
+//                     highlightAnimationBeginColor:
+//                         const Color.fromARGB(255, 153, 153, 153),
+//                     highlightAnimationEndColor: Colors.white12,
+//                     keyboardType: TextInputType.number,
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             const SizedBox(height: 30),
+//             const Text(
+//               "Didn't receive the OTP?",
+//               style: TextStyle(fontSize: 16),
+//             ),
+//             TextButton(
+//               onPressed: () {
+//                 sendOtp();
+//               },
+//               child: const Text(
+//                 "Resend Code",
+//                 style: TextStyle(
+//                     color: Colors.black, decoration: TextDecoration.underline),
+//               ),
+//             ),
+//             const SizedBox(height: 50),
+//             ElevatedButton(
+//               onPressed: () {
+//                 verifyOtp();
+//               },
+//               style: ElevatedButton.styleFrom(
+//                 backgroundColor: const Color.fromARGB(255, 51, 49, 49),
+//                 fixedSize: const Size(350, 60),
+//               ),
+//               child: const Text(
+//                 "Verify",
+//                 style: TextStyle(color: Colors.white, fontSize: 20),
+//               ),
+//             ),
+//           ],
 //         ),
 //       ),
 //     );
