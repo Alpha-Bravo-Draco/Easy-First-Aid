@@ -85,7 +85,7 @@ class _EmergencynumbersState extends State<Emergencynumbers> {
   Widget build(BuildContext context) {
     // final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-    print("===================-------------------= ${widget.previousIndex}");
+    // print("===================-------------------= ${widget.previousIndex}");
     return Scaffold(
       body: Column(
         children: [

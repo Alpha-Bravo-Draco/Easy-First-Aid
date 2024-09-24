@@ -30,6 +30,7 @@ class _GeminiAppState extends State<GeminiApp> {
 
   @override
   Widget build(BuildContext context) {
+    print("App is building---");
     return Scaffold(
       appBar: AppBar(
         title: const Text('Easy AI'),

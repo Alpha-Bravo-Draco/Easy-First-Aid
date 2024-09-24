@@ -67,12 +67,12 @@ class _SignupState extends State<Signup> {
 
           if (user != null) {
             // Show a message to ask the user to verify their email
-            Get.snackbar(
-              "Verification Pending",
-              "We have sent you a verification email. Please check your inbox.",
-              backgroundColor: Colors.orange,
-              colorText: Colors.white,
-            );
+            // Get.snackbar(
+            //   "Success",
+            //   "Moving to Login page",
+            //   backgroundColor: Colors.orange,
+            //   colorText: Colors.white,
+            // );
           }
         } catch (e) {
           // Exception handling is now managed in AuthService

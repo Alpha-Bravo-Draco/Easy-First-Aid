@@ -31,7 +31,9 @@ class _LoginState extends State<Login> {
 
   // Hide loading indicator
   void _hideLoadingIndicator() {
-    Navigator.of(context).pop();
+    if (Navigator.canPop(context)) {
+      Navigator.of(context).pop();
+    }
   }
 
   // Method to handle login
@@ -42,12 +44,27 @@ class _LoginState extends State<Login> {
     if (email.isNotEmpty && password.isNotEmpty) {
       _showLoadingIndicator(); // Show loading indicator
       try {
+        // Sign in the user
         UserCredential userCredential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: email, password: password);
 
         _hideLoadingIndicator(); // Hide loading indicator
 
-        if (userCredential.user != null) {
+        User? user = userCredential.user;
+
+        if (user != null && !user.emailVerified) {
+          // If the user's email is not verified
+          Get.snackbar(
+            "Email Not Verified",
+            "Please verify your email before logging in.",
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          // Send verification email again
+          await user.sendEmailVerification();
+          FirebaseAuth.instance.signOut(); // Sign out the user
+        } else if (user != null && user.emailVerified) {
+          // Navigate to home if email is verified
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const Homescreen()),
@@ -57,7 +74,7 @@ class _LoginState extends State<Login> {
         _hideLoadingIndicator(); // Hide loading indicator on error
         if (e.code == 'user-not-found') {
           Get.snackbar(
-              "User not found", "This user does not exist please signup");
+              "User not found", "This user does not exist, please signup");
         } else if (e.code == 'wrong-password') {
           Get.snackbar("Error", "The supplied credentials are incorrect.",
               backgroundColor: Colors.red, colorText: Colors.white);
@@ -67,7 +84,7 @@ class _LoginState extends State<Login> {
         }
       } catch (e) {
         _hideLoadingIndicator(); // Hide loading indicator on error
-        Get.snackbar("Error", "${e.toString()}}");
+        Get.snackbar("Error", "${e.toString()}");
       }
     } else {
       Get.snackbar("Error", "Please fill all the fields",
@@ -77,7 +94,6 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    // final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false, // Prevents resizing when keyboard shows
@@ -135,26 +151,6 @@ class _LoginState extends State<Login> {
                   isPasswordField: true,
                   obscureText: true,
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(right: 40),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      // TextButton(
-                      //   onPressed: () {
-                      //     // Forgot password logic
-                      //   },
-                      //   child: const Text(
-                      //     "Forgot Password",
-                      //     style: TextStyle(
-                      //       color: Color.fromARGB(255, 71, 69, 69),
-                      //       decoration: TextDecoration.underline,
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                ),
                 SizedBox(height: screenHeight * 0.03),
                 ElevatedButton(
                   onPressed: _isLoading ? null : _login,
@@ -172,34 +168,6 @@ class _LoginState extends State<Login> {
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                 ),
-                SizedBox(height: screenHeight * 0.034),
-                // Row(
-                //   children: [
-                //     Padding(
-                //       padding: const EdgeInsets.only(left: 65, right: 10),
-                //       child: SizedBox(
-                //         width: screenWidth * 0.233,
-                //         // Set the width of the left divider
-                //         child: const Divider(
-                //           color: Colors.grey,
-                //           thickness: 1,
-                //         ),
-                //       ),
-                //     ),
-                //     const Text("Or Sign in with"),
-                //     Padding(
-                //       padding: const EdgeInsets.only(left: 10),
-                //       child: SizedBox(
-                //         width: screenWidth *
-                //             0.233, // Set the width of the right divider
-                //         child: const Divider(
-                //           color: Colors.grey,
-                //           thickness: 1,
-                //         ),
-                //       ),
-                //     ),
-                //   ],
-                // ),
                 SizedBox(height: screenHeight * 0.03),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

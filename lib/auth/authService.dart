@@ -77,6 +77,7 @@ class AuthService {
   // Check if the email is verified
   Future<bool> _checkEmailVerified(User user, BuildContext context) async {
     bool isVerified = false;
+    bool verificationSnackbarShown = false; // Flag to show snackbar only once
 
     while (!isVerified) {
       await user.reload(); // Refresh user status
@@ -90,13 +91,13 @@ class AuthService {
         }
         _showSnackbar(
           "Success",
-          "Email verification successful. Redirecting to login.",
+          "Email verification successful",
           Colors.green,
           Colors.white,
         );
         // Navigate to login screen
-        Future.delayed(const Duration(seconds: 1), () {
-          if (Navigator.canPop(context)) {
+        Future.delayed(const Duration(seconds: 3), () {
+          if (isVerified) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const Login()),
@@ -104,12 +105,17 @@ class AuthService {
           }
         });
       } else {
-        _showSnackbar(
-          'Email Verification',
-          'Please verify your email to continue. We\'ll keep checking.',
-          Colors.yellow,
-          Colors.black,
-        );
+        // Show "Verify your email" snackbar only once
+        if (!verificationSnackbarShown) {
+          verificationSnackbarShown =
+              true; // Set flag to true after first display
+          _showSnackbar(
+            'Email Verification',
+            'Please verify your email to continue.',
+            Colors.yellow,
+            Colors.black,
+          );
+        }
         await Future.delayed(const Duration(seconds: 5));
       }
     }
