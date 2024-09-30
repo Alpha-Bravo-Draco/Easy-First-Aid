@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:easy_first_aid/components/bottomnavbar.dart';
@@ -90,7 +92,7 @@ class _EmergencynumbersState extends State<Emergencynumbers> {
       body: Column(
         children: [
           Container(
-            height: screenHeight * 0.07,
+            height: screenHeight * 0.09,
             width: double.infinity,
             decoration: const BoxDecoration(
               color: Color.fromARGB(255, 255, 55, 41),
@@ -102,7 +104,7 @@ class _EmergencynumbersState extends State<Emergencynumbers> {
                 child: Text(
                   'Emergency helplines, Tap on the button to make a call',
                   style: TextStyle(
-                    fontSize: 17,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -196,6 +198,26 @@ class Images extends StatefulWidget {
 }
 
 class _ImagesState extends State<Images> {
+  final GlobalKey _emergencykey1 = GlobalKey();
+
+  Future<void> isFirstTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
+    if (isFirstTime) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ShowCaseWidget.of(context).startShowCase([_emergencykey1]);
+      });
+      await prefs.setBool('isFirstTime', false);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    isFirstTime();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Flexible(
@@ -226,9 +248,13 @@ class _ImagesState extends State<Images> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(
                           15.0), // You can adjust the radius value as needed
-                      child: Image.network(
-                        widget.image,
-                        fit: BoxFit.cover,
+                      child: Showcase(
+                        description: "Click on the image to call for help",
+                        key: _emergencykey1,
+                        child: Image.network(
+                          widget.image,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     )),
                 Align(

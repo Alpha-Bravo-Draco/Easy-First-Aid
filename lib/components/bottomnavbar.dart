@@ -1,10 +1,10 @@
-import 'package:easy_first_aid/screens/ai_Assistant.dart';
+import 'package:easy_first_aid/screens/ai_assistant.dart';
 import 'package:easy_first_aid/screens/emergencynumbers.dart';
 import 'package:easy_first_aid/screens/homescreen.dart';
 import 'package:easy_first_aid/screens/symptomscheck.dart';
 import 'package:flutter/material.dart';
 
-class BottomNavBar extends StatelessWidget {
+class BottomNavBar extends StatefulWidget {
   final int currentIndex;
   final ValueChanged<int> onTap; // Callback to handle item tap
 
@@ -14,6 +14,11 @@ class BottomNavBar extends StatelessWidget {
     required this.onTap, // Callback to handle item tap
   }) : super(key: key);
 
+  @override
+  State<BottomNavBar> createState() => _BottomNavBarState();
+}
+
+class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
@@ -39,14 +44,14 @@ class BottomNavBar extends StatelessWidget {
           label: 'Symptoms Checker',
         ),
       ],
-      currentIndex: currentIndex,
+      currentIndex: widget.currentIndex,
       selectedItemColor: Colors.amber[800],
       unselectedItemColor: Colors.grey,
       iconSize: 30.0, // Adjust icon size
       selectedFontSize: 12.0, // Adjust label font size
       unselectedFontSize: 12.0, // Adjust label font size
       onTap: (index) {
-        onTap(index);
+        widget.onTap(index);
         // Navigate to a specific screen based on the tapped index
         if (index == 0) {
           Navigator.push(context,
@@ -57,7 +62,7 @@ class BottomNavBar extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => Emergencynumbers(
-                        previousIndex: currentIndex,
+                        previousIndex: widget.currentIndex,
                       )));
         }
         if (index == 2) {

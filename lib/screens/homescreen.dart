@@ -1,6 +1,8 @@
 import 'package:easy_first_aid/components/bottomnavbar.dart';
 import 'package:easy_first_aid/screens/contentPage.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -11,6 +13,33 @@ class Homescreen extends StatefulWidget {
 
 class _HomescreenState extends State<Homescreen> {
   int _selectedIndex = 0;
+  final GlobalKey globalKey1 = GlobalKey();
+  final GlobalKey _homekey2 = GlobalKey();
+
+  // bool _isFirstTime = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFirstTimeLogin(); // Check if it's the user's first time logging in
+  }
+
+  // Check if the Showcase needs to be shown
+  Future<void> _checkFirstTimeLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool hasShownShowcase = prefs.getBool('hasShownShowcase') ?? false;
+
+    if (!hasShownShowcase) {
+      // Show the showcase for the first time
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => Future.delayed(Duration(seconds: 3), () {
+                ShowCaseWidget.of(context)
+                    .startShowCase([globalKey1, _homekey2]);
+              }));
+      // Set the flag so that it doesn't show again
+      prefs.setBool('hasShownShowcase', true);
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -20,7 +49,6 @@ class _HomescreenState extends State<Homescreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -44,19 +72,23 @@ class _HomescreenState extends State<Homescreen> {
                 ),
                 Row(
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                      child: Text(
-                        "Welcome to Easy First Aid",
-                        style: TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.bold),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                      child: Showcase(
+                        description:
+                            "Let's give you a guide to use Easy First Aid",
+                        key: globalKey1,
+                        child: const Text(
+                          "Welcome to Easy First Aid",
+                          style: TextStyle(
+                              fontSize: 25, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                     Expanded(
                       child: Image.asset(
                         'assets/images/FirstAid.png',
-                        fit: BoxFit
-                            .contain, // Adjusts the image size while maintaining aspect ratio
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ],
@@ -95,28 +127,29 @@ class _HomescreenState extends State<Homescreen> {
           Row(
             children: [
               Images(
-                  onPress: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ContentPage(
-                          title: "Bleeding",
-                          description: "Follow the steps to cure bleedness",
-                          imageUrl:
-                              "https://www.shutterstock.com/image-vector/girl-fell-hurt-her-knee-600nw-1106783828.jpg",
-                          step1:
-                              'Gently rinse the area with clean water to remove any dirt or debris.',
-                          step2:
-                              'Use a clean cloth or bandage to apply gentle pressure until the bleeding stops, which usually takes a few minutes.',
-                          step3:
-                              'Once the bleeding stops, apply an antiseptic if available, and cover the wound with a bandage to keep it clean and prevent infection.',
-                        ),
+                onPress: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ContentPage(
+                        title: "Bleeding",
+                        description: "Follow the steps to cure bleeding",
+                        imageUrl:
+                            "https://www.shutterstock.com/image-vector/girl-fell-hurt-her-knee-600nw-1106783828.jpg",
+                        step1:
+                            'Gently rinse the area with clean water to remove any dirt or debris.',
+                        step2:
+                            'Use a clean cloth or bandage to apply gentle pressure until the bleeding stops, which usually takes a few minutes.',
+                        step3:
+                            'Once the bleeding stops, apply an antiseptic if available, and cover the wound with a bandage to keep it clean and prevent infection.',
                       ),
-                    );
-                  },
-                  text: "Bleeding",
-                  image:
-                      "https://www.shutterstock.com/image-vector/girl-fell-hurt-her-knee-600nw-1106783828.jpg"),
+                    ),
+                  );
+                },
+                text: "Bleeding",
+                image:
+                    "https://www.shutterstock.com/image-vector/girl-fell-hurt-her-knee-600nw-1106783828.jpg",
+              ),
               Images(
                   onPress: () {
                     Navigator.push(
@@ -309,26 +342,29 @@ class _HomescreenState extends State<Homescreen> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+      bottomNavigationBar: Showcase(
+        description: "Navigate between different screens from here",
+        key: _homekey2,
+        child: BottomNavBar(
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }
 }
-// import 'package:flutter/material.dart';
 
 class Images extends StatefulWidget {
   final String text, image;
   final VoidCallback? onPress;
-  final bool addShadow; // New property to control shadow
+  final bool addShadow; // Property to control shadow
 
   const Images({
     super.key,
     required this.text,
     required this.image,
     this.onPress,
-    this.addShadow = false, // Default value is false, meaning no shadow
+    this.addShadow = false, // Default value is false (no shadow)
   });
 
   @override
@@ -336,6 +372,30 @@ class Images extends StatefulWidget {
 }
 
 class _ImagesState extends State<Images> {
+  final GlobalKey _globalKey2 = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFirstTimeUser();
+  }
+
+  // Method to check if this is the user's first time on the screen
+  Future<void> _checkFirstTimeUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstTime = prefs.getBool('isFirstTimeShowcase') ?? true;
+
+    if (isFirstTime) {
+      // If it's the first time, start the showcase and set the flag to false
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(const Duration(seconds: 10), () {
+          ShowCaseWidget.of(context).startShowCase([_globalKey2]);
+        });
+      });
+      await prefs.setBool('isFirstTimeShowcase', false); // Update the flag
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Flexible(
@@ -359,7 +419,7 @@ class _ImagesState extends State<Images> {
                                 Colors.black.withOpacity(0.7), // Darker shadow
                             spreadRadius: 6, // Increased spread radius
                             blurRadius: 10, // Increased blur radius
-                            offset: Offset(0, 4), // Increased offset
+                            offset: const Offset(0, 4), // Increased offset
                           ),
                         ]
                       : [], // No shadow if addShadow is false
@@ -369,14 +429,18 @@ class _ImagesState extends State<Images> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(
                         12), // Clip image with border radius
-                    child: Image.network(
-                      widget.image,
-                      fit: BoxFit.cover,
+                    child: Showcase(
+                      key: _globalKey2,
+                      description: "Press the image to know the treatment",
+                      child: Image.network(
+                        widget.image,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 8), // Space between image and text
+              const SizedBox(height: 8), // Space between image and text
               Container(
                 padding:
                     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),

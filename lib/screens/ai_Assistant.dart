@@ -2,6 +2,8 @@ import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:easy_first_aid/components/bottomnavbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class GeminiApp extends StatefulWidget {
   const GeminiApp({super.key});
@@ -13,6 +15,44 @@ class GeminiApp extends StatefulWidget {
 class _GeminiAppState extends State<GeminiApp> {
   int _selectedIndex = 2;
   bool _showChatUI = false; // State to track whether chat UI should appear
+  final GlobalKey _aiKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeFunction();
+  }
+
+  Future<void> _initializeFunction() async {
+    print("Initializing the app...");
+    await _checkFirstTimeUser();
+  }
+
+  Future<void> _checkFirstTimeUser() async {
+    print("Checking if user is a first-time user...");
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? isFirstTime = prefs.getBool('isFirstTimeShowcase');
+
+    // Null safety: If the value is not present, assume it's the first time
+    if (isFirstTime == null || isFirstTime == true) {
+      print("First time user. Showing showcase...");
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(const Duration(seconds: 1), () {
+          if (mounted) {
+            ShowCaseWidget.of(context).startShowCase([_aiKey]);
+          }
+        });
+      });
+
+      // Ensure `SharedPreferences` is updated correctly
+      await prefs.setBool('isFirstTimeShowcase', false);
+      print("SharedPreferences updated: First time flag set to false.");
+    } else {
+      print("User has already seen the showcase.");
+    }
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -21,7 +61,6 @@ class _GeminiAppState extends State<GeminiApp> {
   }
 
   final Gemini gemini = Gemini.instance;
-
   List<ChatMessage> messages = [];
 
   ChatUser currentUser =
@@ -30,7 +69,7 @@ class _GeminiAppState extends State<GeminiApp> {
 
   @override
   Widget build(BuildContext context) {
-    print("App is building---");
+    print("App is building...");
     return Scaffold(
       appBar: AppBar(
         title: const Text('Easy AI'),
@@ -47,17 +86,21 @@ class _GeminiAppState extends State<GeminiApp> {
   }
 
   Widget _buildAnimatedContainers() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildAnimatedContainer(
-              Colors.red, "How to maintain a\n      healthy diet"),
-          SizedBox(height: 20),
-          _buildAnimatedContainer(Colors.green, "How can I stay Fit"),
-          SizedBox(height: 20),
-          _buildAnimatedContainer(Colors.blue, "ask a question"),
-        ],
+    return Showcase(
+      description: "Click on any button to chat with Easy AI",
+      key: _aiKey,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildAnimatedContainer(
+                Colors.red, "How to maintain a\n      healthy diet"),
+            SizedBox(height: 20),
+            _buildAnimatedContainer(Colors.green, "How can I stay Fit"),
+            SizedBox(height: 20),
+            _buildAnimatedContainer(Colors.blue, "ask a question"),
+          ],
+        ),
       ),
     );
   }
