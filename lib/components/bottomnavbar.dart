@@ -45,7 +45,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         ),
       ],
       currentIndex: widget.currentIndex,
-      selectedItemColor: Colors.amber[800],
+      selectedItemColor: Color.fromARGB(255, 244, 46, 20),
       unselectedItemColor: Colors.grey,
       iconSize: 30.0, // Adjust icon size
       selectedFontSize: 12.0, // Adjust label font size

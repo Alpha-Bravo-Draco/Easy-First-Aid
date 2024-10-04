@@ -71,7 +71,7 @@ class _StartscreenState extends State<Startscreen> {
                           Icons.arrow_forward_ios_rounded,
                           color: Colors.grey,
                         ),
-                        activeColor: const Color.fromARGB(255, 200, 17, 17),
+                        activeColor: Color.fromARGB(255, 244, 46, 20),
                         isFinished: isFinished,
                         onWaitingProcess: () {
                           Future.delayed(const Duration(seconds: 2), () {

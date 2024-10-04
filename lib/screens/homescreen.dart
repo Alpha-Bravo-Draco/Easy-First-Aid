@@ -388,7 +388,7 @@ class _ImagesState extends State<Images> {
     if (isFirstTime) {
       // If it's the first time, start the showcase and set the flag to false
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Future.delayed(const Duration(seconds: 10), () {
+        Future.delayed(const Duration(seconds: 9), () {
           ShowCaseWidget.of(context).startShowCase([_globalKey2]);
         });
       });
