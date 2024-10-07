@@ -22,7 +22,7 @@ class GeminiChatController extends GetxController {
     // Injuries and Wounds
     "injury", "wound", "bleeding", "fracture", "sprain", "strain", "bruise",
     "burn", "cut", "laceration", "puncture", "broken bone", "dislocation",
-    "abrasion",
+    "abrasion", "pain", "hurt",
     // Medical Conditions
     "asthma", "allergy", "anaphylaxis", "diabetes", "hypertension", "stroke",
     "heart attack", "seizure", "shock", "unconscious", "fainting", "choking",

@@ -125,18 +125,24 @@ class _ContentPageState extends State<ContentPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(widget.title), // Display the title of the content
+        backgroundColor: Color.fromARGB(255, 244, 46, 20),
+        title: Text(
+          widget.title,
+          style: TextStyle(color: Colors.white),
+        ), // Display the title of the content
         leading: IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      const Homescreen(), // Navigate back to the home screen
-                ),
-              );
-            },
-            icon: const Icon(Icons.arrow_back)),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    const Homescreen(), // Navigate back to the home screen
+              ),
+            );
+          },
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.white,
+        ),
       ),
       body: Column(
         children: [
@@ -173,7 +179,7 @@ class _ContentPageState extends State<ContentPage> {
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent,
+                        color: Color.fromARGB(255, 244, 46, 20),
                       ),
                     ),
                   ),
@@ -203,7 +209,7 @@ class _ContentPageState extends State<ContentPage> {
           AnimatedContainer(
             duration: const Duration(milliseconds: 1000),
             width: double.infinity,
-            color: Colors.blueAccent,
+            color: const Color.fromARGB(255, 244, 46, 20),
             padding: const EdgeInsets.all(16),
             child: GestureDetector(
               onTap: () {
@@ -265,7 +271,7 @@ class _ContentPageState extends State<ContentPage> {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         shape: const CircleBorder(), // Circular button shape
-        backgroundColor: Colors.blue,
+        backgroundColor: Color.fromARGB(255, 244, 46, 20),
         padding: const EdgeInsets.all(16),
       ),
       child: Icon(icon, color: Colors.white), // Icon inside the button

@@ -1,3 +1,4 @@
+import 'package:easy_first_aid/screens/Inventory_Screens/taskscreen.dart';
 import 'package:easy_first_aid/screens/ai_assistant.dart';
 import 'package:easy_first_aid/screens/emergencynumbers.dart';
 import 'package:easy_first_aid/screens/homescreen.dart';
@@ -35,13 +36,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
           icon: Icon(Icons.chat_rounded),
           label: 'Easy AI',
         ),
-        // BottomNavigationBarItem(
-        //   icon: Icon(Icons.edit_road_sharp),
-        //   label: 'Messages',
-        // ),
         BottomNavigationBarItem(
           icon: Icon(Icons.medical_information),
           label: 'Symptoms Checker',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.inventory),
+          label: 'inventory',
         ),
       ],
       currentIndex: widget.currentIndex,
@@ -69,13 +70,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => const GeminiApp()));
         }
-        // if (index == 3) {
-        //   Navigator.push(
-        //       context, MaterialPageRoute(builder: (context) => const Trips()));
-        // }
+
         if (index == 3) {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => const Symptomscheck()));
+        }
+        if (index == 4) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const Taskscreen()));
         }
         // Add navigation for other indices if needed
       },

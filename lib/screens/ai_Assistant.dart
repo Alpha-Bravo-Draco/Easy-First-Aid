@@ -1,8 +1,8 @@
-import 'package:dash_chat_2/dash_chat_2.dart'; // Import for chat UI.
-import 'package:easy_first_aid/components/bottomnavbar.dart'; // Import for custom bottom navigation bar.
-import 'package:easy_first_aid/controllers/geminiController.dart'; // Import for chat controller.
-import 'package:flutter/material.dart'; // Flutter material design components.
-import 'package:get/get.dart'; // GetX for state management.
+import 'package:dash_chat_2/dash_chat_2.dart';
+import 'package:easy_first_aid/components/bottomnavbar.dart';
+import 'package:easy_first_aid/controllers/geminiController.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class GeminiApp extends StatefulWidget {
   const GeminiApp({super.key});
@@ -113,7 +113,7 @@ class _GeminiAppState extends State<GeminiApp> {
               Colors.blue, "What is first Aid"), // Third container.
           const SizedBox(height: 20),
           _buildAnimatedContainer(Colors.orange,
-              "Why is Basic FirstAid knowledge necessary "), // Fourth container.
+              "Why is Basic first aid knowledge necessary "), // Fourth container.
           const SizedBox(height: 20),
           GestureDetector(
             onTap: () => setState(() {
@@ -121,7 +121,7 @@ class _GeminiAppState extends State<GeminiApp> {
                   true; // Show the chat UI when "Ask a question" is tapped.
             }),
             child: _buildAnimatedContainer(
-                Colors.purple, "        Ask a question"), // Fifth container.
+                Colors.purple, "Ask a question"), // Fifth container.
           ),
         ],
       ),
@@ -132,7 +132,7 @@ class _GeminiAppState extends State<GeminiApp> {
   Widget _buildAnimatedContainer(Color color, String text) {
     return GestureDetector(
       onTap: () {
-        if (text != "        Ask a question") {
+        if (text != "Ask a question") {
           chatController.sendMessage(ChatMessage(
               user: chatController.currentUser,
               text: text,
