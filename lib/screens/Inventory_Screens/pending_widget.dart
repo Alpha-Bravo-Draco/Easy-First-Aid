@@ -102,8 +102,7 @@ class _PendingWidgetState extends State<PendingWidget> {
                         icon: Icons.delete,
                         label: "Delete",
                         onPressed: (context) async {
-                          await _databaseServices.deleteTodoTask(
-                              todo.id, false);
+                          await _databaseServices.deleteTodoTask(todo.id);
                         },
                       )
                     ],

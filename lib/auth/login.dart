@@ -1,5 +1,7 @@
 import 'package:easy_first_aid/auth/signup.dart';
+import 'package:easy_first_aid/database/devicetoken.dart';
 import 'package:easy_first_aid/screens/homescreen.dart';
+// import 'package:easy_first_aid/services/database_services.dart'; // Import the DatabaseServices class
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -15,6 +17,8 @@ class _LoginState extends State<Login> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
+  final Tokenservices _dbServices =
+      Tokenservices(); // Instantiate the DatabaseServices class
 
   // Show loading indicator
   void _showLoadingIndicator() {
@@ -64,6 +68,10 @@ class _LoginState extends State<Login> {
           await user.sendEmailVerification();
           FirebaseAuth.instance.signOut(); // Sign out the user
         } else if (user != null && user.emailVerified) {
+          // Store device token in Firestore
+          await _dbServices
+              .storeDeviceToken(); // Store the FCM token after successful login
+
           // Navigate to home if email is verified
           Navigator.pushReplacement(
             context,

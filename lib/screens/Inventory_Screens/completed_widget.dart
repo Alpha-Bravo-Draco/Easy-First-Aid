@@ -26,7 +26,7 @@ class _CompletedWidgetState extends State<CompletedWidget> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<Todo>>(
-      stream: _databaseServices.completedtodos,
+      stream: _databaseServices.completedTodos,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           // Loading state
@@ -80,7 +80,7 @@ class _CompletedWidgetState extends State<CompletedWidget> {
                           icon: Icons.delete,
                           label: "delete",
                           onPressed: (context) {
-                            _databaseServices.deleteTodoTask(todo.id, true);
+                            _databaseServices.deleteTodoTask(todo.id);
                           })
                     ],
                   ),
