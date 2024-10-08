@@ -1,5 +1,6 @@
 import 'package:easy_first_aid/database/database_services.dart';
 import 'package:easy_first_aid/model/inventoryModel.dart';
+import 'package:easy_first_aid/services/notificationservices.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -15,6 +16,7 @@ class _PendingWidgetState extends State<PendingWidget> {
   User? user = FirebaseAuth.instance.currentUser;
   late String uid;
   final DatabaseServices _databaseServices = DatabaseServices();
+  final NotificationService _notificationService = NotificationService();
 
   @override
   void initState() {
@@ -81,6 +83,10 @@ class _PendingWidgetState extends State<PendingWidget> {
                           label: "Mark done",
                           onPressed: (context) {
                             _databaseServices.updateTodoStatus(todo.id, true);
+                            Future.delayed(Duration(seconds: 1), () {
+                              _notificationService
+                                  .showCompleteTaskNotification();
+                            });
                           })
                     ],
                   ),
@@ -103,6 +109,9 @@ class _PendingWidgetState extends State<PendingWidget> {
                         label: "Delete",
                         onPressed: (context) async {
                           await _databaseServices.deleteTodoTask(todo.id);
+                          Future.delayed(Duration(seconds: 1), () {
+                            _notificationService.showDeleteTaskNotification();
+                          });
                         },
                       )
                     ],
@@ -206,6 +215,9 @@ class _PendingWidgetState extends State<PendingWidget> {
                     _titleController.text,
                     _descriptionController.text,
                   );
+                  Future.delayed(Duration(seconds: 1), () {
+                    _notificationService.showUpdateTaskNotification();
+                  });
                 }
                 Navigator.pop(context);
               },
