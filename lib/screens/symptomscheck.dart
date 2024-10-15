@@ -1,4 +1,4 @@
-import 'package:easy_first_aid/components/bottomnavbar.dart';
+// import 'package:easy_first_aid/components/bottomnavbar.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert'; // For jsonDecode
 import 'package:flutter/services.dart'; // For loading asset files
@@ -11,7 +11,7 @@ class Symptomscheck extends StatefulWidget {
 }
 
 class _SymptomscheckState extends State<Symptomscheck> {
-  int _selectedIndex = 3;
+  // int _selectedIndex = 3;
   // Controller for the search text field
   final TextEditingController searchController = TextEditingController();
 
@@ -148,11 +148,11 @@ class _SymptomscheckState extends State<Symptomscheck> {
   }
 
   // on Item Tap function of bottomnavbar
-  void onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  // void onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -395,8 +395,8 @@ class _SymptomscheckState extends State<Symptomscheck> {
           ),
         ],
       ),
-      bottomNavigationBar:
-          BottomNavBar(currentIndex: _selectedIndex, onTap: onItemTapped),
+      // bottomNavigationBar:
+      //     BottomNavBar(currentIndex: _selectedIndex, onTap: onItemTapped),
     );
   }
 }

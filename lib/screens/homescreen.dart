@@ -1,4 +1,4 @@
-import 'package:easy_first_aid/components/bottomnavbar.dart';
+// import 'package:easy_first_aid/components/bottomnavbar.dart';
 import 'package:easy_first_aid/screens/contentPage.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,7 +12,7 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
-  int _selectedIndex = 0;
+  // int _selectedIndex = 0;
   final GlobalKey globalKey1 = GlobalKey();
   final GlobalKey _homekey2 = GlobalKey();
 
@@ -41,11 +41,11 @@ class _HomescreenState extends State<Homescreen> {
     }
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  // void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -342,14 +342,14 @@ class _HomescreenState extends State<Homescreen> {
           ),
         ],
       ),
-      bottomNavigationBar: Showcase(
-        description: "Navigate between different screens from here",
-        key: _homekey2,
-        child: BottomNavBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-        ),
-      ),
+      // bottomNavigationBar: Showcase(
+      //   description: "Navigate between different screens from here",
+      //   key: _homekey2,
+      //   child: BottomNavBar(
+      //     currentIndex: _selectedIndex,
+      //     onTap: _onItemTapped,
+      //   ),
+      // ),
     );
   }
 }

@@ -3,10 +3,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:easy_first_aid/components/bottomnavbar.dart';
+// import 'package:easy_first_aid/components/bottomnavbar.dart';
 
 class Emergencynumbers extends StatefulWidget {
-  final int previousIndex; // Add a previousIndex parameter
+  final int? previousIndex; // Add a previousIndex parameter
 
   Emergencynumbers({super.key, required this.previousIndex});
 
@@ -15,13 +15,13 @@ class Emergencynumbers extends StatefulWidget {
 }
 
 class _EmergencynumbersState extends State<Emergencynumbers> {
-  int _selectedIndex = 1;
+  // int _selectedIndex = 1;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  // void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
 
   Future<void> _makePhoneCall(String number) async {
     // Check if the permission is granted
@@ -172,10 +172,10 @@ class _EmergencynumbersState extends State<Emergencynumbers> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
+      // bottomNavigationBar: BottomNavBar(
+      //   currentIndex: _selectedIndex,
+      //   onTap: _onItemTapped,
+      // ),
     );
   }
 }

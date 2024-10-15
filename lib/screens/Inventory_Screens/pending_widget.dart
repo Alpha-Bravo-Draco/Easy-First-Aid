@@ -109,7 +109,7 @@ class _PendingWidgetState extends State<PendingWidget> {
                         label: "Delete",
                         onPressed: (context) async {
                           await _databaseServices.deleteTodoTask(todo.id);
-                          Future.delayed(Duration(seconds: 1), () {
+                          Future.delayed(Duration(milliseconds: 500), () {
                             _notificationService.showDeleteTaskNotification();
                           });
                         },

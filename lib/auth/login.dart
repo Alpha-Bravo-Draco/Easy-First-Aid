@@ -1,6 +1,9 @@
 import 'package:easy_first_aid/auth/signup.dart';
 import 'package:easy_first_aid/database/devicetoken.dart';
-import 'package:easy_first_aid/screens/homescreen.dart';
+import 'package:easy_first_aid/screens/mainscreen.dart';
+// import 'package:easy_first_aid/screens/homescreen.dart';
+// import 'package:easy_first_aid/screens/mainscreen.dart';
+// import 'package:easy_first_aid/screens/mainscreenWidgets.dart';
 import 'package:easy_first_aid/services/notificationservices.dart';
 // import 'package:easy_first_aid/services/database_services.dart'; // Import the DatabaseServices class
 import 'package:flutter/material.dart';
@@ -74,14 +77,12 @@ class _LoginState extends State<Login> {
           await _dbServices
               .storeDeviceToken(); // Store the FCM token after successful login
 
-          Future.delayed(Duration(seconds: 1), () {
-            _notificationService.showLoginNotification();
-          });
           // Navigate to home if email is verified
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const Homescreen()),
+            MaterialPageRoute(builder: (context) => MainScreen()),
           );
+          _notificationService.showLoginNotification();
         }
       } on FirebaseAuthException catch (e) {
         _hideLoadingIndicator(); // Hide loading indicator on error

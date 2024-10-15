@@ -1,5 +1,5 @@
 import 'package:dash_chat_2/dash_chat_2.dart';
-import 'package:easy_first_aid/components/bottomnavbar.dart';
+// import 'package:easy_first_aid/components/bottomnavbar.dart';
 import 'package:easy_first_aid/controllers/geminiController.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,16 +14,16 @@ class GeminiApp extends StatefulWidget {
 class _GeminiAppState extends State<GeminiApp> {
   final GeminiChatController chatController =
       Get.put(GeminiChatController()); // Initialize chat controller.
-  int _selectedIndex = 2; // Initial selected index for the bottom navigation.
+  // int _selectedIndex = 2; // Initial selected index for the bottom navigation.
   bool _showChatUI =
       false; // To toggle between chat UI and animated containers.
 
   // Method to handle tapping on the bottom navigation bar items.
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index; // Update selected index when a tab is clicked.
-    });
-  }
+  // void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index; // Update selected index when a tab is clicked.
+  //   });
+  // }
 
   // Method to show a confirmation dialog before deleting the chat.
   Future<void> _showDeleteConfirmationDialog() async {
@@ -89,11 +89,11 @@ class _GeminiAppState extends State<GeminiApp> {
       body: Obx(() => _showChatUI || chatController.messages.isNotEmpty
           ? _buildChatUI() // Show chat UI if there are messages or the chat UI is enabled.
           : _buildAnimatedContainers()), // Show animated containers if there are no messages.
-      bottomNavigationBar: BottomNavBar(
-        currentIndex:
-            _selectedIndex, // Pass the current index to the custom bottom navigation bar.
-        onTap: _onItemTapped, // Handle navigation bar item taps.
-      ),
+      // bottomNavigationBar: BottomNavBar(
+      //   currentIndex:
+      //       _selectedIndex, // Pass the current index to the custom bottom navigation bar.
+      //   onTap: _onItemTapped, // Handle navigation bar item taps.
+      // ),
     );
   }
 

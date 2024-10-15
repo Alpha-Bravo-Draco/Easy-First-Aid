@@ -42,7 +42,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.inventory),
-          label: 'inventory',
+          label: 'Inventory',
         ),
       ],
       currentIndex: widget.currentIndex,
@@ -52,34 +52,40 @@ class _BottomNavBarState extends State<BottomNavBar> {
       selectedFontSize: 12.0, // Adjust label font size
       unselectedFontSize: 12.0, // Adjust label font size
       onTap: (index) {
-        widget.onTap(index);
-        // Navigate to a specific screen based on the tapped index
-        if (index == 0) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const Homescreen()));
-        }
-        if (index == 1) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => Emergencynumbers(
-                        previousIndex: widget.currentIndex,
-                      )));
-        }
-        if (index == 2) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const GeminiApp()));
-        }
+        // Only navigate if the tapped index is different from the current index
+        if (index != widget.currentIndex) {
+          widget.onTap(index); // Trigger the callback
 
-        if (index == 3) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const Symptomscheck()));
+          // Navigate to a specific screen based on the tapped index
+          switch (index) {
+            case 0:
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const Homescreen()));
+              break;
+            case 1:
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Emergencynumbers(
+                            previousIndex: widget.currentIndex,
+                          )));
+              break;
+            case 2:
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const GeminiApp()));
+              break;
+            case 3:
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const Symptomscheck()));
+              break;
+            case 4:
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const Taskscreen()));
+              break;
+          }
         }
-        if (index == 4) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const Taskscreen()));
-        }
-        // Add navigation for other indices if needed
       },
     );
   }

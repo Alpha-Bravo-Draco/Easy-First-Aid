@@ -1,1 +1,1 @@
-const Gemini_ApiKey = 'AIzaSyCE4hkwQk0ucw5BDWzbUsvwO4GEpWYdaVA';
+const Gemini_ApiKey = 'AIzaSyAsVMJoJr_yJu1BYk8w7YPyzQh1QoZMrMI';

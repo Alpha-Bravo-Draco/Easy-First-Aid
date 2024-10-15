@@ -1,4 +1,4 @@
-import 'package:easy_first_aid/components/bottomnavbar.dart';
+// import 'package:easy_first_aid/components/bottomnavbar.dart';
 import 'package:easy_first_aid/database/database_services.dart';
 import 'package:easy_first_aid/model/inventoryModel.dart';
 import 'package:easy_first_aid/screens/Inventory_Screens/completed_widget.dart';
@@ -13,12 +13,12 @@ class Taskscreen extends StatefulWidget {
 }
 
 class _TaskscreenState extends State<Taskscreen> {
-  int currentIndex = 4;
-  void onTap(int index) {
-    setState(() {
-      currentIndex = index;
-    });
-  }
+  // int currentIndex = 4;
+  // void onTap(int index) {
+  //   setState(() {
+  //     currentIndex = index;
+  //   });
+  // }
 
   int _buttonIndex = 0;
   final _widgets = [const PendingWidget(), const CompletedWidget()];
@@ -116,8 +116,8 @@ class _TaskscreenState extends State<Taskscreen> {
           _showTaskDialog(context);
         },
       ),
-      bottomNavigationBar:
-          BottomNavBar(currentIndex: currentIndex, onTap: onTap),
+      // bottomNavigationBar:
+      //     BottomNavBar(currentIndex: currentIndex, onTap: onTap),
     );
   }
 
