@@ -17,7 +17,7 @@ class HomeScreen extends StatelessWidget {
         end: Alignment.bottomRight,
         colors: [Colors.red.shade500, Colors.pink.shade500],
       ),
-      'screen': Homescreen(),
+      'screen': const Homescreen(),
     },
     {
       'name': 'Emergency Numbers',
@@ -37,7 +37,7 @@ class HomeScreen extends StatelessWidget {
         end: Alignment.bottomRight,
         colors: [Colors.green.shade500, Colors.teal.shade500],
       ),
-      'screen': GeminiApp(),
+      'screen': const GeminiApp(),
     },
     {
       'name': 'Symptoms',
@@ -47,7 +47,7 @@ class HomeScreen extends StatelessWidget {
         end: Alignment.bottomRight,
         colors: [Colors.yellow.shade500, Colors.orange.shade500],
       ),
-      'screen': Symptomscheck(),
+      'screen': const Symptomscheck(),
     },
     {
       'name': 'Personal FirstAid box',
@@ -57,7 +57,7 @@ class HomeScreen extends StatelessWidget {
         end: Alignment.bottomRight,
         colors: [Colors.indigo.shade500, Colors.blue.shade500],
       ),
-      'screen': Taskscreen(),
+      'screen': const Taskscreen(),
     },
   ];
 
@@ -69,24 +69,28 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           children: [
             // Header
-            SizedBox(
-              width: double.infinity,
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Colors.purple.shade600, Colors.pink.shade600],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
+              child: SizedBox(
+                width: double.infinity,
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Colors.purple.shade600, Colors.pink.shade600],
+                    ),
                   ),
-                ),
-                child: const Text(
-                  'Easy-First-Aid',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  child: const Text(
+                    'Easy-First-Aid',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -161,7 +165,8 @@ class HomeScreen extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Mapscreen()),
+                          MaterialPageRoute(
+                              builder: (context) => const Mapscreen()),
                         );
                       },
                       child: Container(
