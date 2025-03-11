@@ -7,8 +7,11 @@ import 'package:easy_first_aid/screens/symptomscheck.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import 'detectImage.dart';
+
 class HomeScreen extends StatelessWidget {
-  final List<Map<String, dynamic>> services = [
+  final List<Map<String, dynamic>> services =
+  [
     {
       'name': 'Injury Guide',
       'icon': 'assets/first_aid.svg',
@@ -58,6 +61,16 @@ class HomeScreen extends StatelessWidget {
         colors: [Colors.indigo.shade500, Colors.blue.shade500],
       ),
       'screen': const Taskscreen(),
+    },
+    {
+      'name': 'Analyze Image',
+      'icon': 'assets/detectimage.svg',
+      'color': LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Colors.purple.shade500, Colors.blue.shade500],
+      ),
+      'screen':  Analyzeimage(),
     },
   ];
 

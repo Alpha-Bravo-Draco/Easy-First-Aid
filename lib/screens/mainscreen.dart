@@ -1,6 +1,6 @@
 // import 'package:easy_first_aid/screens/homescreen.dart';
 import 'package:easy_first_aid/screens/mainscreenWidgets.dart';
-import 'package:easy_first_aid/screens/profile/alerts.dart';
+// import 'package:easy_first_aid/screens/profile/alerts.dart';
 import 'package:easy_first_aid/screens/profile/profile.dart';
 // import 'package:easy_first_aid/screens/symptomscheck.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
-  final List<Widget> _screens = [HomeScreen(), const Alerts(), const Profile()];
+  final List<Widget> _screens = [HomeScreen(), const Profile()];
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class _MainScreenState extends State<MainScreen> {
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+          // BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'profile'),
         ],
         type: BottomNavigationBarType.fixed,

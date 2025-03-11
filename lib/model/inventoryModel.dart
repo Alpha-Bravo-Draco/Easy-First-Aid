@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Todo {
   final String id, title, description;
+  // final String quantity;
   final bool completed;
   final Timestamp timestamp;
 
@@ -11,5 +12,6 @@ class Todo {
     required this.title,
     required this.description,
     required this.completed,
+    // required this.quantity,
   });
 }

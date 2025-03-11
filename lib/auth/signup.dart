@@ -149,7 +149,7 @@ class _SignupState extends State<Signup> {
                     Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(60, 10, 0, 10),
+                          padding: const EdgeInsets.fromLTRB(20, 0, 0, 10),
                           child: Checkbox(
                             value: _isChecked,
                             onChanged: _toggleCheckbox,

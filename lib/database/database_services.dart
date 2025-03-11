@@ -1,3 +1,120 @@
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:easy_first_aid/model/inventoryModel.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:easy_first_aid/services/notificationservices.dart';
+
+// class DatabaseServices {
+//   final NotificationService _notificationService = NotificationService();
+//   User? user = FirebaseAuth.instance.currentUser;
+
+//   // Get reference to the user's todos subcollection
+//   CollectionReference get todoCollection {
+//     if (user != null) {
+//       return FirebaseFirestore.instance
+//           .collection("users") // Parent collection "users"
+//           .doc(user!.uid) // Document with user's uid
+//           .collection("todos"); // Subcollection "todos"
+//     } else {
+//       throw Exception('User is not logged in.');
+//     }
+//   }
+
+//   // Add a new todo task to the user's subcollection
+//   Future<DocumentReference> addTodoTask(
+//       String title, String description, int quantity) async {
+//     try {
+//       var result = await todoCollection.add({
+//         'uid': user!.uid,
+//         'title': title,
+//         'description': description,
+//         'quantity': quantity,
+//         'completed': false,
+//         'createdAt': FieldValue.serverTimestamp(),
+//       });
+//       await _notificationService.showTaskActionNotification("added");
+//       return result;
+//     } catch (e) {
+//       throw Exception('Failed to add todo task: $e');
+//     }
+//   }
+
+//   // Update a todo item in the user's subcollection
+//   Future<void> updateTodo(
+//       String id, String title, String description, int quantity) async {
+//     try {
+//       await todoCollection.doc(id).update(
+//           {'title': title, 'description': description, 'quantity': quantity});
+//       await _notificationService.showTaskActionNotification("updated");
+//     } catch (e) {
+//       throw Exception('Failed to update todo task: $e');
+//     }
+//   }
+
+//   // Update the completion status of a todo task
+//   Future<void> updateTodoStatus(String id, bool completed) async {
+//     try {
+//       await todoCollection.doc(id).update({'completed': completed});
+//       await _notificationService.showTaskActionNotification(
+//         completed ? "completed" : "marked incomplete",
+//       );
+//     } catch (e) {
+//       throw Exception('Failed to update todo status: $e');
+//     }
+//   }
+
+//   // Delete a todo task from the user's subcollection
+//   Future<void> deleteTodoTask(String id) async {
+//     try {
+//       await todoCollection.doc(id).delete();
+//       await _notificationService.showTaskActionNotification("deleted");
+//     } catch (e) {
+//       throw Exception('Failed to delete todo task: $e');
+//     }
+//   }
+
+//   // Get the pending tasks for the current user
+//   Stream<List<Todo>> get todos {
+//     try {
+//       return todoCollection
+//           .where('completed', isEqualTo: false)
+//           .snapshots()
+//           .map(_todoListFromSnapshot);
+//     } catch (e) {
+//       throw Exception('Failed to get todos: $e');
+//     }
+//   }
+
+//   // Get the completed tasks for the current user
+//   Stream<List<Todo>> get completedTodos {
+//     try {
+//       return todoCollection
+//           .where('completed', isEqualTo: true)
+//           .snapshots()
+//           .map(_todoListFromSnapshot);
+//     } catch (e) {
+//       throw Exception('Failed to get completed todos: $e');
+//     }
+//   }
+
+//   // Convert the Firestore snapshot to a list of Todo objects
+//   List<Todo> _todoListFromSnapshot(QuerySnapshot snapshot) {
+//     try {
+//       return snapshot.docs.map((doc) {
+//         return Todo(
+//           id: doc.id,
+//           timestamp: doc['createdAt'] ?? "",
+//           title: doc['title'] ?? "",
+//           quantity: doc['quantity'] ?? 0, // Map quantity
+//           description: doc['description'] ?? "",
+//           completed: doc['completed'] ?? false,
+//         );
+//       }).toList();
+//     } catch (e) {
+//       throw Exception('Failed to parse todos: $e');
+//     }
+//   }
+// }
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_first_aid/model/inventoryModel.dart';
 import 'package:firebase_auth/firebase_auth.dart';

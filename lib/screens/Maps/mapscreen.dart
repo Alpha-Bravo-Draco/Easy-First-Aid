@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -9,14 +8,17 @@ class Mapscreen extends StatefulWidget {
   const Mapscreen({Key? key}) : super(key: key);
 
   @override
-  State<Mapscreen> createState() => _MapscreenState();
+  State<Mapscreen> createState() => _MapScreenState();
 }
 
-class _MapscreenState extends State<Mapscreen> {
+class _MapScreenState extends State<Mapscreen> {
+  // ignore: unused_field
   GoogleMapController? _mapController;
   Position? _currentPosition;
   Set<Marker> _markers = {};
-  Map<PolylineId, Polyline> _polylines = {};
+  Set<Polyline> _polylines = {}; // For storing polylines
+  bool _isLoading = false;
+  bool _isDrawingRoute = false; // For route drawing loader
 
   @override
   void initState() {
@@ -59,100 +61,150 @@ class _MapscreenState extends State<Mapscreen> {
     setState(() {
       _currentPosition = position;
     });
+
     _getNearbyHospitals();
   }
 
   void _getNearbyHospitals() async {
     if (_currentPosition == null) return;
 
+    setState(() {
+      _isLoading = true;
+    });
+
+    final String apiKey =
+        'AIzaSyAjdVXGes1tTvMDHZD6Yzgm_0mKl5lwtto'; // Replace with your API Key
     final url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?'
         'location=${_currentPosition!.latitude},${_currentPosition!.longitude}'
-        '&radius=5000&type=hospital&key=YOUR_API_KEY';
+        '&radius=9000&type=hospital&key=$apiKey';
 
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      setState(() {
-        _markers.clear();
-        for (var hospital in data['results']) {
-          _markers.add(
-            Marker(
-              markerId: MarkerId(hospital['place_id']),
-              position: LatLng(
-                hospital['geometry']['location']['lat'],
-                hospital['geometry']['location']['lng'],
-              ),
-              infoWindow: InfoWindow(
-                title: hospital['name'],
-                snippet: hospital['vicinity'],
-              ),
-              onTap: () => _getDirections(
-                LatLng(
-                  hospital['geometry']['location']['lat'],
-                  hospital['geometry']['location']['lng'],
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        setState(() {
+          _markers.clear();
+
+          final List<String> keywords = [
+            'Hospital',
+            'hospital',
+            'clinic',
+            'Clinic'
+          ]; // Add all your keywords here
+
+          for (var hospital in data['results']) {
+            if (hospital['types'] != null &&
+                keywords
+                    .any((keyword) => hospital['types'].contains(keyword))) {
+              final lat = hospital['geometry']['location']['lat'];
+              final lng = hospital['geometry']['location']['lng'];
+              final name = hospital['name'];
+              final vicinity = hospital['vicinity'];
+
+              _markers.add(
+                Marker(
+                  markerId: MarkerId(hospital['place_id']),
+                  position: LatLng(lat, lng),
+                  infoWindow: InfoWindow(
+                    title: name,
+                    snippet: vicinity,
+                  ),
+                  icon: BitmapDescriptor.defaultMarkerWithHue(
+                      BitmapDescriptor.hueAzure),
+                  onTap: () => _drawRoute(LatLng(lat, lng)),
                 ),
-              ),
-            ),
-          );
-        }
-      });
+              );
+            }
+          }
+        });
+      } else {
+        print('Failed to fetch data. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching nearby hospitals: $e');
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
-  void _getDirections(LatLng destination) async {
+  void _drawRoute(LatLng destination) async {
     if (_currentPosition == null) return;
 
-    PolylinePoints polylinePoints = PolylinePoints();
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      googleApiKey: 'AIzaSyDfH1-36pRzgE8dXbaUGtyhWu7P6yoGICY',
-      request: PolylineRequest(
-        origin: PointLatLng(
-            _currentPosition!.latitude, _currentPosition!.longitude),
-        destination: PointLatLng(destination.latitude, destination.longitude),
-        mode: TravelMode.driving,
-      ),
-    );
+    setState(() {
+      _isDrawingRoute = true; // Show loader for route drawing
+    });
 
-    if (result.points.isNotEmpty) {
-      List<LatLng> polylineCoordinates = [];
-      result.points.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
+    final String apiKey =
+        'AIzaSyAjdVXGes1tTvMDHZD6Yzgm_0mKl5lwtto'; // Replace with your API Key
+    final url = 'https://maps.googleapis.com/maps/api/directions/json?'
+        'origin=${_currentPosition!.latitude},${_currentPosition!.longitude}'
+        '&destination=${destination.latitude},${destination.longitude}'
+        '&mode=driving&key=$apiKey';
 
-      setState(() {
-        _polylines.clear();
-        _polylines[PolylineId('route')] = Polyline(
-          polylineId: PolylineId('route'),
-          color: Colors.blue,
-          points: polylineCoordinates,
-          width: 5,
-        );
-      });
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final points = data['routes'][0]['overview_polyline']['points'];
+        final List<LatLng> polylineCoordinates = _decodePolyline(points);
 
-      _mapController?.animateCamera(
-        CameraUpdate.newLatLngBounds(
-          LatLngBounds(
-            southwest: LatLng(
-              _currentPosition!.latitude < destination.latitude
-                  ? _currentPosition!.latitude
-                  : destination.latitude,
-              _currentPosition!.longitude < destination.longitude
-                  ? _currentPosition!.longitude
-                  : destination.longitude,
+        setState(() {
+          _polylines.clear();
+          _polylines.add(
+            Polyline(
+              polylineId: const PolylineId('route'),
+              points: polylineCoordinates,
+              color: Colors.blue,
+              width: 5,
             ),
-            northeast: LatLng(
-              _currentPosition!.latitude > destination.latitude
-                  ? _currentPosition!.latitude
-                  : destination.latitude,
-              _currentPosition!.longitude > destination.longitude
-                  ? _currentPosition!.longitude
-                  : destination.longitude,
-            ),
-          ),
-          100.0,
-        ),
-      );
+          );
+        });
+      } else {
+        print(
+            'Failed to fetch directions. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching directions: $e');
     }
+
+    setState(() {
+      _isDrawingRoute = false; // Hide loader after route drawing
+    });
+  }
+
+  List<LatLng> _decodePolyline(String polyline) {
+    List<LatLng> coordinates = [];
+    int index = 0, len = polyline.length;
+    int lat = 0, lng = 0;
+
+    while (index < len) {
+      int shift = 0, result = 0;
+      int b;
+      do {
+        b = polyline.codeUnitAt(index++) - 63;
+        result |= (b & 0x1F) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int deltaLat = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+      lat += deltaLat;
+
+      shift = 0;
+      result = 0;
+      do {
+        b = polyline.codeUnitAt(index++) - 63;
+        result |= (b & 0x1F) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int deltaLng = (result & 1) != 0 ? ~(result >> 1) : (result >> 1);
+      lng += deltaLng;
+
+      coordinates.add(LatLng(lat / 1e5, lng / 1e5));
+    }
+
+    return coordinates;
   }
 
   @override
@@ -160,27 +212,11 @@ class _MapscreenState extends State<Mapscreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Nearby Hospitals'),
-        actions: [
-          if (_currentPosition != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  const Icon(Icons.location_on, color: Colors.red),
-                  const SizedBox(width: 8),
-                  Text(
-                    '${_currentPosition!.latitude.toStringAsFixed(4)}, '
-                    '${_currentPosition!.longitude.toStringAsFixed(4)}',
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-        ],
       ),
-      body: _currentPosition == null
-          ? const Center(child: CircularProgressIndicator())
-          : GoogleMap(
+      body: Stack(
+        children: [
+          if (_currentPosition != null)
+            GoogleMap(
               initialCameraPosition: CameraPosition(
                 target: LatLng(
                     _currentPosition!.latitude, _currentPosition!.longitude),
@@ -188,14 +224,20 @@ class _MapscreenState extends State<Mapscreen> {
               ),
               onMapCreated: (controller) => _mapController = controller,
               markers: _markers,
-              polylines: Set<Polyline>.of(_polylines.values),
+              polylines: _polylines,
               myLocationEnabled: true,
               myLocationButtonEnabled: true,
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _getNearbyHospitals,
-        child: const Icon(Icons.refresh),
+          if (_isLoading || _isDrawingRoute)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
       ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: _getNearbyHospitals,
+      //   child: const Icon(Icons.refresh),
+      // ),
     );
   }
 }

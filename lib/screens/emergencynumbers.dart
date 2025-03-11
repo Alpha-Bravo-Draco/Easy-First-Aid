@@ -92,7 +92,7 @@ class _EmergencynumbersState extends State<Emergencynumbers> {
       body: Column(
         children: [
           Container(
-            height: screenHeight * 0.09,
+            height: screenHeight * 0.11,
             width: double.infinity,
             decoration: const BoxDecoration(
               color: Color.fromARGB(255, 255, 55, 41),
@@ -104,7 +104,7 @@ class _EmergencynumbersState extends State<Emergencynumbers> {
                 child: Text(
                   'Emergency helplines, Tap on the button to make a call',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 17,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),

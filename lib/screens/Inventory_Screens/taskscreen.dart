@@ -32,7 +32,7 @@ class _TaskscreenState extends State<Taskscreen> {
         automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFF1d2630),
         foregroundColor: Colors.white,
-        title: const Text("Inventory"),
+        title: const Text("Todo List"),
         centerTitle: true,
       ),
       body: Column(

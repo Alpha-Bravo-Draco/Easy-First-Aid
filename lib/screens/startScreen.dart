@@ -1,4 +1,5 @@
-import 'package:easy_first_aid/auth/signup.dart';
+import 'package:easy_first_aid/auth/login.dart';
+// import 'package:easy_first_aid/auth/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:swipeable_button_view/swipeable_button_view.dart';
 
@@ -78,9 +79,7 @@ class _StartscreenState extends State<Startscreen> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const Signup(
-                                  email: '',
-                                ),
+                                builder: (context) => const Login(),
                               ),
                             );
                             setState(() {

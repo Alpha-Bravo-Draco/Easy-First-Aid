@@ -13,6 +13,7 @@ import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:easy_first_aid/services/notificationservices.dart';
+
 // Import the notification service
 
 // Main background handler for FCM
@@ -65,7 +66,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const Startscreen(),
+      home: Startscreen(),
       routes: {
         'signup': (context) => const Signup(
               email: '',
